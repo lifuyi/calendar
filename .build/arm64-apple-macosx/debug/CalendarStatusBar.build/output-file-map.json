@@ -1,0 +1,71 @@
+{
+  "": {
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/master.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/App.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/App.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/App.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/App~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/App.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/CalendarGridView.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarGridView.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarGridView.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarGridView~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarGridView.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/CalendarHeaderView.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarHeaderView.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarHeaderView.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarHeaderView~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarHeaderView.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/CalendarView.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarView.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarView.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarView~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarView.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/CalendarViewModel.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarViewModel.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarViewModel.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/CalendarViewModel.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/ChineseCalendarHelper.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/ChineseCalendarHelper.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/ChineseCalendarHelper.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/ChineseCalendarHelper~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/ChineseCalendarHelper.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/DayInfo.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/DayInfo.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/DayInfo.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/DayInfo~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/DayInfo.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/WeatherPanelView.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherPanelView.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherPanelView.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherPanelView~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherPanelView.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/WeatherService.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherService.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherService.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherService~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/WeatherService.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/Sources/CalendarStatusBar/main.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/main.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/main.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/main.swiftdeps"
+  },
+  "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/DerivedSources/resource_bundle_accessor.swift": {
+    "dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/resource_bundle_accessor.d",
+    "object": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/resource_bundle_accessor.swift.o",
+    "swiftmodule": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/resource_bundle_accessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/eyeopen/Downloads/calendar/.build/arm64-apple-macosx/debug/CalendarStatusBar.build/resource_bundle_accessor.swiftdeps"
+  }
+}
