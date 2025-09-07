@@ -37,6 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         startStatusBarTimer()
         NSApp.setActivationPolicy(.accessory)  // 设置为后台运行模式
         NSApp.activate(ignoringOtherApps: true)  // 激活应用但不显示窗口
+        
+        // Initialize EventManager to request calendar access
+        _ = EventManager.shared
     }
     
     // 拆分设置UI的逻辑
@@ -77,8 +80,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let button = self?.statusItem?.button {
                 self?.updateStatusBarButton(button)
                 // 更新 CalendarViewModel 中的 currentDate
-                if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
-                    calendarView.viewModel.currentDate = Date()
+                DispatchQueue.main.async {
+                    if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
+                        calendarView.viewModel.currentDate = Date()
+                    }
                 }
             }
         }

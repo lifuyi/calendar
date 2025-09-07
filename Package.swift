@@ -18,7 +18,8 @@ let package = Package(
                 .process("Holidays")
             ],
             linkerSettings: [
-                .linkedFramework("ServiceManagement")
+                .linkedFramework("ServiceManagement"),
+                .linkedFramework("EventKit")
             ]
         )
     ]
