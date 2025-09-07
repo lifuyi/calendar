@@ -28,6 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
     private var eventMonitor: Any?
+    private var quitShortcutMonitor: Any?
     
     // 添加析构函数清理资源
     deinit {
@@ -35,11 +36,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let eventMonitor = eventMonitor {
             NSEvent.removeMonitor(eventMonitor)
         }
+        if let quitShortcutMonitor = quitShortcutMonitor {
+            NSEvent.removeMonitor(quitShortcutMonitor)
+        }
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupUI()
         startStatusBarTimer()
+        setupKeyboardShortcuts()
         NSApp.setActivationPolicy(.accessory)  // 设置为后台运行模式
         NSApp.activate(ignoringOtherApps: true)  // 激活应用但不显示窗口
         
@@ -53,6 +58,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         setupStatusItem()
         setupPopover()
+    }
+    
+    private func setupKeyboardShortcuts() {
+        // Add global keyboard shortcut for quitting the app (Cmd+Q)
+        quitShortcutMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            // Check if Cmd+Q is pressed
+            if event.modifierFlags.contains(.command) && event.characters == "q" {
+                NSApp.terminate(nil)
+                return nil // Don't pass the event further
+            }
+            return event // Pass the event to the next responder
+        }
     }
     
     private func setupStatusItem() {
@@ -70,7 +87,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func setupPopover() {
         popover = NSPopover()
-        popover?.contentSize = Constants.popoverSize  // 使用常量设置初始大小
+        popover?.contentSize = Constants.popoverSize  // 使用常量中定义的尺寸
         popover?.behavior = .transient
         popover?.animates = true
         popover?.contentViewController = NSHostingController(

@@ -135,6 +135,8 @@ class EventManager: ObservableObject {
         }
         
         // Fallback: try to open System Preferences app directly
-        NSWorkspace.shared.launchApplication("System Preferences")
+        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.systempreferences") {
+            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration(), completionHandler: nil)
+        }
     }
 }

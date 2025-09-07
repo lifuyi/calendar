@@ -135,7 +135,11 @@ struct EventsDrawerView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .fixedSize(horizontal: false, vertical: isExpanded) // Use dynamic height when expanded
+        .frame(height: isExpanded ? 200 : 30, alignment: .top) // Fixed height when expanded
         .animation(.easeInOut, value: isExpanded)
+        .background(Color(NSColor.windowBackgroundColor))
+        .cornerRadius(8)
+        .shadow(radius: 5)
+        .padding(.bottom, 20) // 添加底部边距确保可见
     }
 }
