@@ -53,15 +53,10 @@ struct EventRowView: View {
     }
     
     private func openEventInCalendarApp(_ event: EKEvent) {
-        // Print debug information
-        print("Attempting to open event: \(event.title)")
-        
         // Open Calendar app directly using its bundle identifier
-        print("Opening Calendar app directly")
         let calendarBundleIdentifier = "com.apple.iCal"
         if let calendarURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: calendarBundleIdentifier) {
             NSWorkspace.shared.openApplication(at: calendarURL, configuration: NSWorkspace.OpenConfiguration())
-            print("Calendar app opened directly")
         }
     }
 }
