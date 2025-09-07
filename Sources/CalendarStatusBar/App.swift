@@ -3,6 +3,7 @@ import AppKit
 import CoreText
 import CoreGraphics
 import ServiceManagement
+import Foundation
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     // 使用常量管理配置
@@ -61,6 +62,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var popover: NSPopover?
     private var eventMonitor: Any?
     private var quitShortcutMonitor: Any?
+    private var ipLocationService: IPLocationService?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupUI()
@@ -71,6 +73,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Initialize EventManager to request calendar access
         _ = EventManager.shared
+        
+        // 初始化IP位置服务
+        ipLocationService = IPLocationService()
     }
     
     // 拆分设置UI的逻辑

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WeatherPanelView: View {
     @ObservedObject var viewModel: CalendarViewModel
+    @StateObject private var locationService = IPLocationService()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -9,6 +10,17 @@ struct WeatherPanelView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("天气信息测试")
                     .font(.system(size: 13, weight: .bold))
+                
+                // 当前位置显示
+                if !locationService.city.isEmpty {
+                    HStack {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 11))
+                        Text(locationService.city)
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
+                }
                 
                 // 加载状态指示器
                 if viewModel.isWeatherLoading {
@@ -51,6 +63,8 @@ struct WeatherPanelView: View {
             // 测试按钮区域
             Button(action: {
                 viewModel.weatherService.fetchWeather()
+                // 更新位置信息
+                locationService.fetchLocation()
             }) {
                 HStack {
                     Image(systemName: "arrow.clockwise")
@@ -64,6 +78,10 @@ struct WeatherPanelView: View {
                 .cornerRadius(4)
             }
             .buttonStyle(.plain)
+        }
+        .onAppear {
+            // 在视图出现时获取位置信息
+            locationService.fetchLocation()
         }
     }
 }

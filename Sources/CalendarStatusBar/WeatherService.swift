@@ -13,8 +13,8 @@ class WeatherService: ObservableObject {
     @Published var errorMessage: String? = nil
     
     // 位置信息
-    private let latitude: Double
-    private let longitude: Double
+    private var latitude: Double
+    private var longitude: Double
     
     // 天气代码映射到描述
     private let weatherCodes: [Int: String] = [
@@ -50,6 +50,12 @@ class WeatherService: ObservableObject {
     
     // 初始化方法
     init(latitude: Double = 39.9042, longitude: Double = 116.4074) {
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+    
+    // 更新位置信息
+    func updateLocation(latitude: Double, longitude: Double) {
         self.latitude = latitude
         self.longitude = longitude
     }
