@@ -5,7 +5,7 @@ struct CalendarHeaderView: View {
     private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 5) {
             // 顶部控制栏
             HStack(spacing: 6) {
                 // 年份选择

@@ -61,6 +61,8 @@ cat > "${CONTENTS_DIR}/Info.plist" << EOF
     <string>NSApplication</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>CFBundleIconFile</key>
+    <string>${APP_NAME}.icns</string>
 </dict>
 </plist>
 EOF
@@ -76,6 +78,21 @@ fi
 
 if [ -f "mainland-china.json" ]; then
     cp "mainland-china.json" "${RESOURCES_DIR}/"
+fi
+
+# Copy app icon from assets
+if [ -f "Sources/CalendarStatusBar/assets/StatusBarIcon.png" ]; then
+    echo "Setting up app icon..."
+    
+    # Copy StatusBarIcon.png directly to Resources so it can be used as the app icon
+    cp "Sources/CalendarStatusBar/assets/StatusBarIcon.png" "${RESOURCES_DIR}/${APP_NAME}.png"
+    
+    # Also create the icns file by simply copying and renaming the png (fallback approach)
+    cp "Sources/CalendarStatusBar/assets/StatusBarIcon.png" "${RESOURCES_DIR}/${APP_NAME}.icns"
+    
+    echo "App icon copied: ${APP_NAME}.icns"
+else
+    echo "Warning: StatusBarIcon.png not found, app will use default icon"
 fi
 
 # Make executable

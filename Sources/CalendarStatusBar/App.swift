@@ -7,12 +7,13 @@ import ServiceManagement
 class AppDelegate: NSObject, NSApplicationDelegate {
     // 使用常量管理配置
     private enum Constants {
-        static let popoverSize = NSSize(width: 350, height: 350)
+        static let popoverSize = NSSize(width: 600, height: 400)
         static let updateInterval: TimeInterval = 1
         static let fontName = "dingliesong"
         static let fontExtension = "ttf"
         static let dateFormat = "MM月dd日 HH:mm E"
         static let localeIdentifier = "zh_CN"
+        static let statusBarFontSize: CGFloat = 14
     }
     
     // 使用私有属性存储格式化器
@@ -26,10 +27,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusBarUpdateTimer: Timer?
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
+    private var eventMonitor: Any?
     
     // 添加析构函数清理资源
     deinit {
         statusBarUpdateTimer?.invalidate()
+        if let eventMonitor = eventMonitor {
+            NSEvent.removeMonitor(eventMonitor)
+        }
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -53,19 +58,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            // 设置状态栏图标
-            if let iconImage = NSImage(named: "StatusBarIcon") {
-                iconImage.isTemplate = true  // 使图标适应深色/浅色模式
-                button.image = iconImage
-            }
+            // No icon on status bar, just text with larger font
+            let dateString = dateFormatter.string(from: Date())
+            let font = NSFont.systemFont(ofSize: Constants.statusBarFontSize)
+            let attributes: [NSAttributedString.Key: Any] = [.font: font]
+            let attributedString = NSAttributedString(string: dateString, attributes: attributes)
+            button.attributedTitle = attributedString
             button.action = #selector(togglePopover(_:))
         }
     }
     
     private func setupPopover() {
         popover = NSPopover()
-        popover?.contentSize = Constants.popoverSize
-        popover?.behavior = .semitransient
+        popover?.contentSize = Constants.popoverSize  // 使用常量设置初始大小
+        popover?.behavior = .transient
+        popover?.animates = true
         popover?.contentViewController = NSHostingController(
             rootView: CalendarView()
                 .background(Color(NSColor.windowBackgroundColor))
@@ -90,7 +97,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func updateStatusBarButton(_ button: NSStatusBarButton) {
-        button.title = dateFormatter.string(from: Date())
+        let dateString = dateFormatter.string(from: Date())
+        let font = NSFont.systemFont(ofSize: Constants.statusBarFontSize)
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let attributedString = NSAttributedString(string: dateString, attributes: attributes)
+        button.attributedTitle = attributedString
     }
     
     private func registerCustomFonts() {
@@ -124,8 +135,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = statusItem?.button {
             if popover?.isShown == true {
                 popover?.performClose(sender)
+                // Remove event monitor when closing popover
+                if let eventMonitor = eventMonitor {
+                    NSEvent.removeMonitor(eventMonitor)
+                    self.eventMonitor = nil
+                }
             } else {
                 popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+                // Add event monitor to close popover when clicking outside
+                eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+                    if let popover = self?.popover, popover.isShown {
+                        popover.performClose(nil)
+                        // Remove event monitor after closing
+                        if let eventMonitor = self?.eventMonitor {
+                            NSEvent.removeMonitor(eventMonitor)
+                            self?.eventMonitor = nil
+                        }
+                    }
+                }
             }
         }
     }
@@ -153,6 +180,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Quit
         let quitItem = NSMenuItem(title: "退出", action: #selector(quitApp(_:)), keyEquivalent: "q")
+        quitItem.keyEquivalentModifierMask = .command
         menu.addItem(quitItem)
         
         // Show menu

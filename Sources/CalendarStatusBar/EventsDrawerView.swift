@@ -1,88 +1,6 @@
 import SwiftUI
 import EventKit
 
-struct EventsDrawerView: View {
-    @ObservedObject var eventManager: EventManager
-    @Binding var isExpanded: Bool
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            // Drawer header with toggle button
-            HStack {
-                Text("今日事件")
-                    .font(.headline)
-                    .fontWeight(.medium)
-                
-                Spacer()
-                
-                Button(action: {
-                    withAnimation {
-                        isExpanded.toggle()
-                    }
-                }) {
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                        .font(.caption)
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-            .background(Color.gray.opacity(0.2))
-            
-            // Events list (only shown when expanded)
-            if isExpanded {
-                // Show authorization error if exists
-                if let errorMessage = eventManager.authorizationError {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("权限错误")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundColor(.red)
-                        
-                        Text(errorMessage)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                        
-                        VStack(spacing: 8) {
-                            Button("重新请求权限") {
-                                eventManager.refreshCalendarAccess()
-                            }
-                            .font(.caption)
-                            .frame(maxWidth: .infinity)
-                            
-                            Button("打开系统设置") {
-                                eventManager.openCalendarPrivacySettings()
-                            }
-                            .font(.caption)
-                            .frame(maxWidth: .infinity)
-                        }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                } else if eventManager.todayEvents.isEmpty {
-                    Text("今天没有事件")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                } else {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 8) {
-                            ForEach(eventManager.todayEvents, id: \.eventIdentifier) { event in
-                                EventRowView(event: event)
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
-                    }
-                }
-            }
-        }
-        .frame(maxHeight: isExpanded ? 200 : nil)
-    }
-}
-
 struct EventRowView: View {
     let event: EKEvent
     
@@ -128,5 +46,96 @@ struct EventRowView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
+    }
+}
+
+struct EventsDrawerView: View {
+    @ObservedObject var eventManager: EventManager
+    @Binding var isExpanded: Bool
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Drawer header with toggle button
+            HStack {
+                Text("今日事件")
+                    .font(.headline)
+                    .fontWeight(.medium)
+                
+                Spacer()
+                
+                Button(action: {
+                    withAnimation {
+                        isExpanded.toggle()
+                    }
+                }) {
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(Color.gray.opacity(0.2))
+            .onTapGesture {
+                withAnimation {
+                    isExpanded.toggle()
+                }
+            }
+            
+            // Events list (only shown when expanded)
+            if isExpanded {
+                // Show authorization error if exists
+                if let errorMessage = eventManager.authorizationError {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("权限错误")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.red)
+                        
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                        VStack(spacing: 8) {
+                            Button("重新请求权限") {
+                                eventManager.refreshCalendarAccess()
+                            }
+                            .font(.caption)
+                            .frame(maxWidth: .infinity)
+                            
+                            Button("打开系统设置") {
+                                eventManager.openCalendarPrivacySettings()
+                            }
+                            .font(.caption)
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                } else if eventManager.todayEvents.isEmpty {
+                    Text("今天没有事件")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 50) // Set a minimum height for empty state
+                } else {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 8) {
+                            ForEach(eventManager.todayEvents, id: \.eventIdentifier) { event in
+                                EventRowView(event: event)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                    }
+                    .frame(maxHeight: 300) // Limit maximum height
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .fixedSize(horizontal: false, vertical: isExpanded) // Use dynamic height when expanded
+        .animation(.easeInOut, value: isExpanded)
     }
 }

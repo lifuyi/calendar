@@ -18,17 +18,15 @@ struct CalendarView: View {
     private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             HStack(spacing: 10) {
-                VStack(spacing: 10) {
+                VStack(spacing: 5) {
                     // 顶部控制栏和星期标题
                     CalendarHeaderView(viewModel: viewModel)
                     
                     // 日历网格
                     CalendarGridView(viewModel: viewModel)
                         .padding(.horizontal)
-                    
-                    Spacer(minLength: 0)
                     
                     // 底部信息
                     HStack {
@@ -40,7 +38,7 @@ struct CalendarView: View {
                             .font(.custom(customFont, size: 11))
                             .foregroundColor(.secondary)
                     }
-                    .frame(width: 350)
+                    .frame(width: 300)
                     .padding(.horizontal)
                 }
                 
@@ -65,14 +63,14 @@ struct CalendarView: View {
                     // 天气面板
                     WeatherPanelView(viewModel: viewModel)
                 }
-                .frame(width: 180)
+                .frame(width: 150)
                 .padding()
             }
             
             // 事件抽屉 - 现在位于整个容器的底部
             EventsDrawerView(eventManager: eventManager, isExpanded: $isEventsDrawerExpanded)
-                .frame(height: isEventsDrawerExpanded ? 200 : 30)
-                .padding(.horizontal)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 18)  // 10% padding on each side for 90% width
                 
             // Add a button to manually request calendar access if needed
             if !eventManager.isAuthorized && eventManager.authorizationError != nil {
@@ -85,6 +83,7 @@ struct CalendarView: View {
             }
         }
         .padding()
+        .frame(minWidth: 500, idealWidth: 600, maxWidth: .infinity, minHeight: 300, idealHeight: 400, maxHeight: .infinity)
         .onChange(of: viewModel.currentDate) { _ in
             // 视图将自动响应 viewModel.currentDate 的变化
             eventManager.loadTodayEvents()
