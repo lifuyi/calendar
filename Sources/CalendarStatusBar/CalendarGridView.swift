@@ -131,20 +131,21 @@ struct CalendarDayView: View {
                                 .fill(Color.orange)
                         )
                 } else {
-                    // 占位符以保持布局一致性
-                    Color.clear.frame(width: 12, height: 12)
+                    // 占位符，保持布局一致。最后试验没有占位符好看
+                    // Color.clear.frame(width: 12, height: 12)
                 }
                 
                 // 阳历日期
-                Text("\(Calendar.current.component(.day, from: day.date))")
-                    .font(.system(size: 13))
-                    .foregroundColor(
-                        isToday ? todayTextColor :
-                            isHoliday ? holidayColor :
-                            isWeekend && isCurrentMonth ? weekendColor :
-                            isCurrentMonth ? .primary : inactiveTextColor
-                    )
-                Spacer()
+                HStack(alignment: .center) {
+                    Text("\(Calendar.current.component(.day, from: day.date))")
+                        .font(.system(size: 13))
+                        .foregroundColor(
+                            isToday ? todayTextColor :
+                                isHoliday ? holidayColor :
+                                isWeekend && isCurrentMonth ? weekendColor :
+                                isCurrentMonth ? .primary : inactiveTextColor
+                        )
+                }
             }
             
             HStack {
