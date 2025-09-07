@@ -2,6 +2,7 @@ import SwiftUI
 import AppKit
 import CoreText
 import CoreGraphics
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     // 使用常量管理配置
@@ -122,6 +123,66 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             }
         }
+    }
+    
+    @objc private func showSettingsMenu(_ sender: AnyObject?) {
+        let menu = NSMenu()
+        
+        // Start at login
+        let loginItem = NSMenuItem(title: "开机启动", action: #selector(toggleLoginItem(_:)), keyEquivalent: "")
+        // For now, we'll assume it's off since we can't easily check without deprecated APIs
+        loginItem.state = .off
+        menu.addItem(loginItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        // GitHub link
+        let githubItem = NSMenuItem(title: "GitHub", action: #selector(openGitHub(_:)), keyEquivalent: "")
+        menu.addItem(githubItem)
+        
+        // Check updates
+        let updateItem = NSMenuItem(title: "检查更新", action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+        menu.addItem(updateItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        // Quit
+        let quitItem = NSMenuItem(title: "退出", action: #selector(quitApp(_:)), keyEquivalent: "q")
+        menu.addItem(quitItem)
+        
+        // Show menu
+        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+    }
+    
+    @objc private func toggleLoginItem(_ sender: AnyObject?) {
+        if let bundleIdentifier = Bundle.main.bundleIdentifier {
+            // Toggle the setting
+            // We'll always set it to true for now since we can't easily check the current state
+            let newStatus = true
+            let success = SMLoginItemSetEnabled(bundleIdentifier as CFString, newStatus)
+            
+            // Update menu item state if we had a reference
+            if let menuItem = sender as? NSMenuItem {
+                menuItem.state = success ? .on : .off
+            }
+        }
+    }
+    
+    @objc private func openGitHub(_ sender: AnyObject?) {
+        if let url = URL(string: "https://github.com/lifuyi/calendar") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    @objc private func checkForUpdates(_ sender: AnyObject?) {
+        // For now, just open the GitHub releases page
+        if let url = URL(string: "https://github.com/lifuyi/calendar/releases") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    @objc private func quitApp(_ sender: AnyObject?) {
+        NSApp.terminate(nil)
     }
 }
 

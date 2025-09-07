@@ -2,6 +2,7 @@ import SwiftUI
 import Foundation
 import Combine
 
+@MainActor
 class CalendarViewModel: ObservableObject {    
     // 天气服务
     var weatherService: WeatherService
@@ -151,12 +152,70 @@ class CalendarViewModel: ObservableObject {
     
     // 判断是否为法定节假日
     func isHoliday(_ date: Date) -> Bool {
-        return ChineseCalendarHelper.isHoliday(date)
+        print("CalendarViewModel.isHoliday called with date: \(date)")
+        // 使用新的 HolidayManager 来判断节假日
+        let year = calendar.component(.year, from: date)
+        let monthDayFormatter = DateFormatter()
+        monthDayFormatter.dateFormat = "MMdd"
+        let monthDayString = monthDayFormatter.string(from: date)
+        
+        print("Checking HolidayManager for year: \(year), monthDay: \(monthDayString)")
+        if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
+            print("Found holiday from HolidayManager: \(year)-\(monthDayString) type: \(holidayType)")
+            return holidayType == .holiday
+        }
+        
+        // 如果 HolidayManager 没有数据，则回退到原来的方法
+        let result = ChineseCalendarHelper.isHoliday(date)
+        print("Holiday check result: \(result)")
+        return result
     }
     
     // 获取节假日名称
     func holidayName(for date: Date) -> String? {
-        return ChineseCalendarHelper.holidayName(for: date)
+        print("Getting holiday name for date: \(date)")
+        // 使用新的 HolidayManager 来获取节假日名称
+        let year = calendar.component(.year, from: date)
+        let monthDayFormatter = DateFormatter()
+        monthDayFormatter.dateFormat = "MMdd"
+        let monthDayString = monthDayFormatter.string(from: date)
+        
+        if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
+            if holidayType == .holiday {
+                print("Found holiday name from HolidayManager: \(year)-\(monthDayString)")
+                // 对于通过 HolidayManager 管理的节假日，我们需要映射到具体的名称
+                switch monthDayString {
+                case "0101": return "元旦"
+                case "0501": return "劳动节"
+                case "1001": return "国庆节"
+                // 可以根据需要添加更多节日
+                default: 
+                    // 尝试从 ChineseCalendarHelper 获取名称
+                    if let name = ChineseCalendarHelper.holidayName(for: date) {
+                        print("Using holiday name from ChineseCalendarHelper: \(name)")
+                        return name
+                    }
+                    print("Using default holiday name")
+                    return "节假日"
+                }
+            }
+        }
+        
+        // 如果 HolidayManager 没有数据，则回退到原来的方法
+        let result = ChineseCalendarHelper.holidayName(for: date)
+        print("Holiday name result: \(String(describing: result))")
+        return result
+    }
+    
+    // 同步版本的方法，用于视图中调用
+    func isHolidaySync(_ date: Date) -> Bool {
+        // 在主线程中执行异步方法并等待结果
+        return isHoliday(date)
+    }
+    
+    func holidayNameSync(for date: Date) -> String? {
+        // 在主线程中执行异步方法并等待结果
+        return holidayName(for: date)
     }
     
     // 更新选中的日期

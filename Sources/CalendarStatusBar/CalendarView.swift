@@ -44,8 +44,20 @@ struct CalendarView: View {
             // 右侧信息面板
             VStack(alignment: .leading, spacing: 10) {
                 // 日期信息
-                Text("日期: \(formattedDate)")
-                    .font(.custom(customFont, size: 12))
+                HStack {
+                    Text("日期: \(formattedDate)")
+                        .font(.custom(customFont, size: 12))
+                    Spacer()
+                    // 设置按钮
+                    Button(action: {
+                        // 菜单操作将在AppDelegate中实现
+                        NSApp.sendAction(Selector(("showSettingsMenu:")), to: nil, from: nil)
+                    }) {
+                        Image(systemName: "gear")
+                            .font(.system(size: 12))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
                 
                 // 天气面板
                 WeatherPanelView(viewModel: viewModel)

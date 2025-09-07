@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:calendar}",
+            "name": "Debug CalendarStatusBar",
+            "program": "${workspaceFolder:calendar}/.build/debug/CalendarStatusBar",
+            "preLaunchTask": "swift: Build Debug CalendarStatusBar"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:calendar}",
+            "name": "Release CalendarStatusBar",
+            "program": "${workspaceFolder:calendar}/.build/release/CalendarStatusBar",
+            "preLaunchTask": "swift: Build Release CalendarStatusBar"
+        }
+    ]
+}

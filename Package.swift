@@ -11,9 +11,14 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "CalendarStatusBar",
+            dependencies: [],
             resources: [
                 .process("assets"),
-                .process("Media.xcassets")
+                .process("Media.xcassets"),
+                .process("Holidays")
+            ],
+            linkerSettings: [
+                .linkedFramework("ServiceManagement")
             ]
         )
     ]

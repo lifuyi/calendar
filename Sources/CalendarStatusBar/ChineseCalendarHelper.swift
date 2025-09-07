@@ -5,18 +5,13 @@ class ChineseCalendarHelper {
     private static let gregorianCalendar = Calendar.current
     private static let chineseCalendar = Calendar(identifier: .chinese)
     
-    // 法定节假日数据 (示例，请替换为实际数据)
+    // 法定节假日数据 (使用新的 HolidayManager)
     private static let holidays: [String: String] = [
         "01-01": "元旦",
         "05-01": "劳动节",
         "10-01": "国庆节",
-        "06-01": "",
-        // 对于春节、清明、端午、中秋等农历节日，需要根据农历计算
-        // 例如：
-        // "02-10": "春节" // 示例，日期不固定
-        // "04-04": "清明" // 示例，日期不固定
-        // "06-10": "端午" // 示例，日期不固定
-        // "09-17": "中秋" // 示例，日期不固定
+        // 农历节日需要特殊处理
+        // 春节、清明、端午、中秋等节日将通过 HolidayManager 处理
     ]
     
     // 农历月份名称
@@ -100,10 +95,43 @@ class ChineseCalendarHelper {
     
     // 判断是否为法定节假日
     static func isHoliday(_ date: Date) -> Bool {
+        print("ChineseCalendarHelper.isHoliday called with date: \(date)")
         let formatter = DateFormatter()
         formatter.dateFormat = "MM-dd"
         let dateString = formatter.string(from: date)
-        return holidays[dateString] != nil
+        
+        // 先检查固定日期的节假日
+        if holidays[dateString] != nil && !holidays[dateString]!.isEmpty {
+            print("Found fixed holiday: \(dateString)")
+            return true
+        }
+        
+        // 再检查通过 HolidayManager 管理的节假日
+        let year = gregorianCalendar.component(.year, from: date)
+        let monthDayFormatter = DateFormatter()
+        monthDayFormatter.dateFormat = "MMdd"
+        let monthDayString = monthDayFormatter.string(from: date)
+        
+        print("Checking HolidayManager for year: \(year), monthDay: \(monthDayString)")
+        if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
+            print("Found holiday from HolidayManager: \(year)-\(monthDayString) type: \(holidayType)")
+            return holidayType == .holiday
+        }
+        
+        return false
+    }
+    
+    // 判断是否为调休上班日
+    static func isWorkday(_ date: Date) -> Bool {
+        let year = gregorianCalendar.component(.year, from: date)
+        let monthDayFormatter = DateFormatter()
+        monthDayFormatter.dateFormat = "MMdd"
+        let monthDayString = monthDayFormatter.string(from: date)
+        
+        if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
+            return holidayType == .workday
+        }
+        return false
     }
     
     // 获取节假日名称
@@ -111,7 +139,47 @@ class ChineseCalendarHelper {
         let formatter = DateFormatter()
         formatter.dateFormat = "MM-dd"
         let dateString = formatter.string(from: date)
-        return holidays[dateString]
+        
+        // 先检查固定日期的节假日
+        if let name = holidays[dateString], !name.isEmpty {
+            print("Found fixed holiday name: \(dateString) - \(name)")
+            return name
+        }
+        
+        // 再检查通过 HolidayManager 管理的节假日
+        let year = gregorianCalendar.component(.year, from: date)
+        let monthDayFormatter = DateFormatter()
+        monthDayFormatter.dateFormat = "MMdd"
+        let monthDayString = monthDayFormatter.string(from: date)
+        
+        if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
+            if holidayType == .holiday {
+                print("Found holiday name from HolidayManager: \(year)-\(monthDayString)")
+                // 对于通过 HolidayManager 管理的节假日，我们需要映射到具体的名称
+                // 这里可以根据实际需求进行扩展
+                switch monthDayString {
+                case "0101": return "元旦"
+                case "0501": return "劳动节"
+                case "1001": return "国庆节"
+                default: return "节假日"
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    // 别名方法，保持与之前版本的兼容性
+    static func isHolidaySync(_ date: Date) -> Bool {
+        return isHoliday(date)
+    }
+    
+    static func isWorkdaySync(_ date: Date) -> Bool {
+        return isWorkday(date)
+    }
+    
+    static func holidayNameSync(for date: Date) -> String? {
+        return holidayName(for: date)
     }
     
     // 获取当前是一年中的第几天
