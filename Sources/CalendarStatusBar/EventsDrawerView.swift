@@ -46,14 +46,12 @@ struct EventsDrawerView: View {
                         
                         VStack(spacing: 8) {
                             Button("重新请求权限") {
-                                print("Re-request permission button clicked!")
                                 eventManager.refreshCalendarAccess()
                             }
                             .font(.caption)
                             .frame(maxWidth: .infinity)
                             
                             Button("打开系统设置") {
-                                print("Open System Settings button clicked!")
                                 eventManager.openCalendarPrivacySettings()
                             }
                             .font(.caption)

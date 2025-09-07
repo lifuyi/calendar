@@ -81,7 +81,6 @@ class WeatherService: ObservableObject {
                 
                 guard let data = data else {
                     self?.errorMessage = "未收到天气数据"
-                    print("No weather data received")
                     return
                 }
                 

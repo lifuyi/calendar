@@ -97,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             try registerFont(name: Constants.fontName, extension: Constants.fontExtension)
         } catch {
-            print("字体注册失败: \(error)")
+            // Font registration failed
         }
     }
     

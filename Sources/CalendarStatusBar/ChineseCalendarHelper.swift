@@ -95,14 +95,14 @@ class ChineseCalendarHelper {
     
     // 判断是否为法定节假日
     static func isHoliday(_ date: Date) -> Bool {
-        print("ChineseCalendarHelper.isHoliday called with date: \(date)")
+        // Check if date is a holiday
         let formatter = DateFormatter()
         formatter.dateFormat = "MM-dd"
         let dateString = formatter.string(from: date)
         
         // 先检查固定日期的节假日
         if holidays[dateString] != nil && !holidays[dateString]!.isEmpty {
-            print("Found fixed holiday: \(dateString)")
+            // Found fixed holiday
             return true
         }
         
@@ -112,9 +112,7 @@ class ChineseCalendarHelper {
         monthDayFormatter.dateFormat = "MMdd"
         let monthDayString = monthDayFormatter.string(from: date)
         
-        print("Checking HolidayManager for year: \(year), monthDay: \(monthDayString)")
         if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
-            print("Found holiday from HolidayManager: \(year)-\(monthDayString) type: \(holidayType)")
             return holidayType == .holiday
         }
         
@@ -142,7 +140,6 @@ class ChineseCalendarHelper {
         
         // 先检查固定日期的节假日
         if let name = holidays[dateString], !name.isEmpty {
-            print("Found fixed holiday name: \(dateString) - \(name)")
             return name
         }
         
@@ -154,7 +151,6 @@ class ChineseCalendarHelper {
         
         if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
             if holidayType == .holiday {
-                print("Found holiday name from HolidayManager: \(year)-\(monthDayString)")
                 // 对于通过 HolidayManager 管理的节假日，我们需要映射到具体的名称
                 // 这里可以根据实际需求进行扩展
                 switch monthDayString {
