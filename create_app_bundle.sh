@@ -85,10 +85,10 @@ if [ -f "Sources/CalendarStatusBar/assets/StatusBarIcon.png" ]; then
     echo "Setting up app icon..."
     
     # Copy StatusBarIcon.png directly to Resources so it can be used as the app icon
-    cp "Sources/CalendarStatusBar/assets/StatusBarIcon.png" "${RESOURCES_DIR}/${APP_NAME}.png"
+    cp "Sources/CalendarStatusBar/assets/RoundedIcon.png" "${RESOURCES_DIR}/${APP_NAME}.png"
     
     # Also create the icns file by simply copying and renaming the png (fallback approach)
-    cp "Sources/CalendarStatusBar/assets/StatusBarIcon.png" "${RESOURCES_DIR}/${APP_NAME}.icns"
+    cp "Sources/CalendarStatusBar/assets/RoundedIcon.png" "${RESOURCES_DIR}/${APP_NAME}.icns"
     
     echo "App icon copied: ${APP_NAME}.icns"
 else

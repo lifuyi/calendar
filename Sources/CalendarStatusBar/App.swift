@@ -16,6 +16,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         static let statusBarFontSize: CGFloat = 14
     }
     
+    // 星座emoji映射
+    private static let zodiacEmojis: [String: String] = [
+        "水瓶座": "♒️",
+        "双鱼座": "♓️",
+        "白羊座": "♈️",
+        "金牛座": "♉️",
+        "双子座": "♊️",
+        "巨蟹座": "♋️",
+        "狮子座": "♌️",
+        "处女座": "♍️",
+        "天秤座": "♎️",
+        "天蝎座": "♏️",
+        "射手座": "♐️",
+        "摩羯座": "♑️"
+    ]
+    
+    // 生肖emoji映射
+    private static let animalEmojis: [String: String] = [
+        "鼠": "🐭",
+        "牛": "🐮",
+        "虎": "🐯",
+        "兔": "🐰",
+        "龙": "🐉",
+        "蛇": "🐍",
+        "马": "🐴",
+        "羊": "🐑",
+        "猴": "🐵",
+        "鸡": "🐔",
+        "狗": "🐶",
+        "猪": "🐷"
+    ]
+    
     // 使用私有属性存储格式化器
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -30,17 +62,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var eventMonitor: Any?
     private var quitShortcutMonitor: Any?
     
-    // 添加析构函数清理资源
-    deinit {
-        statusBarUpdateTimer?.invalidate()
-        if let eventMonitor = eventMonitor {
-            NSEvent.removeMonitor(eventMonitor)
-        }
-        if let quitShortcutMonitor = quitShortcutMonitor {
-            NSEvent.removeMonitor(quitShortcutMonitor)
-        }
-    }
-    
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupUI()
         startStatusBarTimer()
@@ -54,7 +75,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // 拆分设置UI的逻辑
     private func setupUI() {
-        registerCustomFonts()
         NSApp.setActivationPolicy(.accessory)
         setupStatusItem()
         setupPopover()
@@ -121,31 +141,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         button.attributedTitle = attributedString
     }
     
-    private func registerCustomFonts() {
-        do {
-            try registerFont(name: Constants.fontName, extension: Constants.fontExtension)
-        } catch {
-            // Font registration failed
+    /// 获取星座
+    private func getZodiacSign(for date: Date) -> String {
+        let month = Calendar.current.component(.month, from: date)
+        let day = Calendar.current.component(.day, from: date)
+        
+        switch (month, day) {
+        case (1, 20...31), (2, 1...18): return "水瓶座"
+        case (2, 19...29), (3, 1...20): return "双鱼座"
+        case (3, 21...31), (4, 1...19): return "白羊座"
+        case (4, 20...30), (5, 1...20): return "金牛座"
+        case (5, 21...31), (6, 1...21): return "双子座"
+        case (6, 22...30), (7, 1...22): return "巨蟹座"
+        case (7, 23...31), (8, 1...22): return "狮子座"
+        case (8, 23...31), (9, 1...22): return "处女座"
+        case (9, 23...30), (10, 1...23): return "天秤座"
+        case (10, 24...31), (11, 1...22): return "天蝎座"
+        case (11, 23...30), (12, 1...21): return "射手座"
+        case (12, 22...31), (1, 1...19): return "摩羯座"
+        default: return "未知"
         }
     }
     
-    private func registerFont(name: String, extension ext: String) throws {
-        guard let fontURL = Bundle.module.url(forResource: name, withExtension: ext) else {
-            throw FontError.fileNotFound
-        }
-        
-        guard let fontDataProvider = CGDataProvider(url: fontURL as CFURL) else {
-            throw FontError.invalidDataProvider
-        }
-        
-        guard let font = CGFont(fontDataProvider) else {
-            throw FontError.invalidFont
-        }
-        
-        var error: Unmanaged<CFError>?
-        if !CTFontManagerRegisterGraphicsFont(font, &error) {
-            throw FontError.registrationFailed(error?.takeUnretainedValue())
-        }
+    /// 获取生肖
+    private func getChineseZodiacAnimal(for date: Date) -> String {
+        let animals = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"]
+        let year = Calendar.current.component(.year, from: date)
+        let animalIndex = (year - 4) % 12
+        return animals[animalIndex >= 0 ? animalIndex : animalIndex + 12]
     }
     
     @objc private func togglePopover(_ sender: AnyObject?) {
@@ -179,8 +202,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Start at login
         let loginItem = NSMenuItem(title: "开机启动", action: #selector(toggleLoginItem(_:)), keyEquivalent: "")
-        // For now, we'll assume it's off since we can't easily check without deprecated APIs
-        loginItem.state = .off
+        loginItem.state = isLoginItemEnabled() ? .on : .off
         menu.addItem(loginItem)
         
         menu.addItem(NSMenuItem.separator())
@@ -204,16 +226,66 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
     
+    /// 检查应用是否已设置为开机启动
+    private func isLoginItemEnabled() -> Bool {
+        guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
+            return false
+        }
+        
+        // 使用SMAppService检查登录项状态（macOS 13.0+）
+        if #available(macOS 13.0, *) {
+            let status = SMAppService.mainApp.status
+            return status == .enabled
+        } else {
+            // 在较早的macOS版本上使用旧方法
+            return isLoginItemEnabledLegacy(bundleIdentifier: bundleIdentifier)
+        }
+    }
+    
+    /// 使用传统方法检查登录项状态
+    private func isLoginItemEnabledLegacy(bundleIdentifier: String) -> Bool {
+        // 使用已弃用但仍然有效的API检查登录项状态
+        let jobDict = SMJobCopyDictionary(kSMDomainUserLaunchd, bundleIdentifier as CFString)?.takeRetainedValue() as? [String: Any]
+        return jobDict?["OnDemand"] as? Bool != false
+    }
+    
     @objc private func toggleLoginItem(_ sender: AnyObject?) {
         if let bundleIdentifier = Bundle.main.bundleIdentifier {
-            // Toggle the setting
-            // We'll always set it to true for now since we can't easily check the current state
-            let newStatus = true
-            let success = SMLoginItemSetEnabled(bundleIdentifier as CFString, newStatus)
+            // 获取当前状态并切换
+            let currentState = isLoginItemEnabled()
+            let newState = !currentState
             
-            // Update menu item state if we had a reference
+            // 根据macOS版本使用相应的API
+            let success: Bool
+            if #available(macOS 13.0, *) {
+                do {
+                    if newState {
+                        try SMAppService.mainApp.register()
+                    } else {
+                        try SMAppService.mainApp.unregister()
+                    }
+                    success = true
+                } catch {
+                    success = false
+                }
+            } else {
+                // 在较早的macOS版本上使用旧方法
+                success = SMLoginItemSetEnabled(bundleIdentifier as CFString, newState)
+            }
+            
+            // 更新菜单项状态
             if let menuItem = sender as? NSMenuItem {
-                menuItem.state = success ? .on : .off
+                menuItem.state = success && newState ? .on : .off
+            }
+            
+            // 如果设置失败，显示错误信息
+            if !success {
+                let alert = NSAlert()
+                alert.messageText = "设置失败"
+                alert.informativeText = "无法设置开机启动选项，请稍后重试。"
+                alert.alertStyle = .warning
+                alert.addButton(withTitle: "确定")
+                alert.runModal()
             }
         }
     }
