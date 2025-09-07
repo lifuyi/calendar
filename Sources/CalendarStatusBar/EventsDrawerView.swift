@@ -1,5 +1,6 @@
 import SwiftUI
 import EventKit
+import AppKit
 
 struct EventRowView: View {
     let event: EKEvent
@@ -40,12 +41,28 @@ struct EventRowView: View {
             Spacer()
         }
         .padding(.vertical, 2)
+        .onTapGesture {
+            openEventInCalendarApp(event)
+        }
     }
     
     private func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
+    }
+    
+    private func openEventInCalendarApp(_ event: EKEvent) {
+        // Print debug information
+        print("Attempting to open event: \(event.title)")
+        
+        // Open Calendar app directly using its bundle identifier
+        print("Opening Calendar app directly")
+        let calendarBundleIdentifier = "com.apple.iCal"
+        if let calendarURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: calendarBundleIdentifier) {
+            NSWorkspace.shared.openApplication(at: calendarURL, configuration: NSWorkspace.OpenConfiguration())
+            print("Calendar app opened directly")
+        }
     }
 }
 
@@ -68,7 +85,7 @@ struct EventsDrawerView: View {
                         isExpanded.toggle()
                     }
                 }) {
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    Image(systemName: isExpanded ? "chevron.down" : "chevron.up")
                         .font(.caption)
                 }
                 .buttonStyle(PlainButtonStyle())
