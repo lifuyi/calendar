@@ -1,2 +1,12 @@
 .build/
 LunarBar-main/
+
+# Build artifacts
+*.app/Contents/MacOS/*
+*.o
+*.dylib
+*.so
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
