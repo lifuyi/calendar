@@ -12,7 +12,8 @@ let package = Package(
         .executableTarget(
             name: "CalendarStatusBar",
             resources: [
-                .process("assets")
+                .process("assets"),
+                .process("Media.xcassets")
             ]
         )
     ]
