@@ -40,11 +40,11 @@ class CalendarViewModel: ObservableObject {
     init() {
         let calendar = Calendar.current
         let currentDate = Date()
-        // 初始化天气服务
-        weatherService = WeatherService()
-        
         // 初始化定位服务
         locationService = IPLocationService()
+        
+        // 初始化天气服务，使用当前位置作为默认值
+        weatherService = WeatherService(latitude: locationService.latitude, longitude: locationService.longitude)
         
         // 设置天气服务的定位服务
         weatherService.setLocationService(locationService)
@@ -253,14 +253,38 @@ class CalendarViewModel: ObservableObject {
     
     // 设置天气数据绑定
     private func setupWeatherBindings() {
-        weatherService.objectWillChange.sink { [weak self] _ in
-            self?.temperature = self?.weatherService.temperature ?? "--"
-            self?.weatherInfo = self?.weatherService.weatherInfo ?? "--"
-            self?.humidity = self?.weatherService.humidity ?? "--"
-            self?.isWeatherLoading = self?.weatherService.isLoading ?? false
-            self?.weatherError = self?.weatherService.errorMessage
-        }
-        .store(in: &cancellables)
+        // 监听天气服务的变化
+        weatherService.$temperature.sink { [weak self] temp in
+            self?.temperature = temp
+        }.store(in: &cancellables)
+        
+        weatherService.$weatherInfo.sink { [weak self] info in
+            self?.weatherInfo = info
+        }.store(in: &cancellables)
+        
+        weatherService.$humidity.sink { [weak self] humidity in
+            self?.humidity = humidity
+        }.store(in: &cancellables)
+        
+        weatherService.$airPressure.sink { [weak self] pressure in
+            self?.airPressure = pressure
+        }.store(in: &cancellables)
+        
+        weatherService.$rain.sink { [weak self] rain in
+            self?.rain = rain
+        }.store(in: &cancellables)
+        
+        weatherService.$feelTemperature.sink { [weak self] feelTemp in
+            self?.feelTemperature = feelTemp
+        }.store(in: &cancellables)
+        
+        weatherService.$isLoading.sink { [weak self] loading in
+            self?.isWeatherLoading = loading
+        }.store(in: &cancellables)
+        
+        weatherService.$errorMessage.sink { [weak self] error in
+            self?.weatherError = error
+        }.store(in: &cancellables)
     }
     
     // 用于存储取消令牌
