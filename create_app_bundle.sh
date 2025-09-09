@@ -7,6 +7,9 @@ echo "Creating CalendarStatusBar.app bundle..."
 # Build the project first
 swift build -c release
 
+# Get the build path
+BUILD_PATH=$(swift build -c release --show-bin-path)
+
 # Create app bundle structure
 APP_NAME="CalendarStatusBar"
 BUNDLE_DIR="${APP_NAME}.app"
@@ -67,17 +70,10 @@ cat > "${CONTENTS_DIR}/Info.plist" << EOF
 </plist>
 EOF
 
-# Copy resources if they exist
-if [ -d "Sources/CalendarStatusBar/Media.xcassets" ]; then
-    cp -r "Sources/CalendarStatusBar/Media.xcassets" "${RESOURCES_DIR}/"
-fi
-
-if [ -d "Sources/CalendarStatusBar/Holidays" ]; then
-    cp -r "Sources/CalendarStatusBar/Holidays" "${RESOURCES_DIR}/"
-fi
-
-if [ -f "mainland-china.json" ]; then
-    cp "mainland-china.json" "${RESOURCES_DIR}/"
+# Copy resources from the build directory
+BUNDLE_RESOURCE_PATH="${BUILD_PATH}/CalendarStatusBar_CalendarStatusBar.bundle"
+if [ -d "${BUNDLE_RESOURCE_PATH}" ]; then
+    cp -r "${BUNDLE_RESOURCE_PATH}/"* "${RESOURCES_DIR}/"
 fi
 
 # Copy app icon from assets

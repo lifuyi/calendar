@@ -13,18 +13,37 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     // Core Location管理器
     private var locationManager: CLLocationManager?
     
-    // 获取IP地理位置
+    // 获取位置信息
     func fetchLocation() {
         isLoading = true
         errorMessage = nil
         
+        // 先尝试使用系统定位服务
+        useCLLocationService()
+    }
+    
+    // 使用系统内置定位服务
+    private func useCLLocationService() {
+        // 初始化位置管理器
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        locationManager?.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        
+        // 请求授权
+        locationManager?.requestWhenInUseAuthorization()
+        
+        // 开始定位
+        locationManager?.startUpdatingLocation()
+    }
+    
+    // 使用IP定位作为备选方案
+    private func useIPLocation() {
         // 使用ip-api.com服务获取地理位置信息
         let urlString = "http://ip-api.com/json/?fields=status,message,country,regionName,city,lat,lon"
         
         guard let url = URL(string: urlString) else {
             self.errorMessage = "无效的URL"
             self.isLoading = false
-            useCLLocationService()
             return
         }
         
@@ -36,13 +55,11 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
                 
                 if let error = error {
                     self?.errorMessage = "获取位置失败: \(error.localizedDescription)"
-                    self?.useCLLocationService()
                     return
                 }
                 
                 guard let data = data else {
                     self?.errorMessage = "未收到位置数据"
-                    self?.useCLLocationService()
                     return
                 }
                 
@@ -66,26 +83,10 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
                 self.errorMessage = nil
             } else {
                 self.errorMessage = locationResponse.message ?? "获取位置信息失败"
-                useCLLocationService()
             }
         } catch {
             self.errorMessage = "解析位置数据失败: \(error.localizedDescription)"
-            useCLLocationService()
         }
-    }
-    
-    // 使用系统内置定位服务
-    private func useCLLocationService() {
-        // 初始化位置管理器
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
-        locationManager?.desiredAccuracy = kCLLocationAccuracyThreeKilometers
-        
-        // 请求授权
-        locationManager?.requestWhenInUseAuthorization()
-        
-        // 开始定位
-        locationManager?.startUpdatingLocation()
     }
     
     // CLLocationManagerDelegate方法
@@ -100,7 +101,8 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
         // 反向地理编码获取城市名称
         CLGeocoder().reverseGeocodeLocation(location) { [weak self] placemarks, error in
             if let error = error {
-                print("反向地理编码失败: \(error.localizedDescription)")
+                // 反向地理编码失败，记录错误但不中断流程
+                self?.errorMessage = "位置解析失败: \(error.localizedDescription)"
                 return
             }
             
@@ -116,6 +118,9 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         self.errorMessage = "定位服务失败: \(error.localizedDescription)"
         locationManager?.stopUpdatingLocation()
+        
+        // 系统定位失败，尝试使用IP定位
+        useIPLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -124,9 +129,10 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
             // 授权成功，开始定位
             locationManager?.startUpdatingLocation()
         case .denied, .restricted:
-            // 授权被拒绝
+            // 授权被拒绝，尝试使用IP定位
             self.errorMessage = "定位服务授权被拒绝"
             locationManager?.stopUpdatingLocation()
+            useIPLocation()
         case .notDetermined:
             // 还未决定，不需要处理
             break

@@ -7,6 +7,9 @@ class CalendarViewModel: ObservableObject {
     // 天气服务
     var weatherService: WeatherService
     
+    // 定位服务
+    var locationService: IPLocationService
+    
     // 天气相关的状态
     @Published var temperature: String = "--"
     @Published var weatherInfo: String = "--"
@@ -40,6 +43,12 @@ class CalendarViewModel: ObservableObject {
         // 初始化天气服务
         weatherService = WeatherService()
         
+        // 初始化定位服务
+        locationService = IPLocationService()
+        
+        // 设置天气服务的定位服务
+        weatherService.setLocationService(locationService)
+        
         _selectedYear = Published(initialValue: calendar.component(.year, from: currentDate))
         _selectedMonth = Published(initialValue: calendar.component(.month, from: currentDate))
         updateDays()
@@ -47,8 +56,8 @@ class CalendarViewModel: ObservableObject {
         // 设置天气数据更新回调
         setupWeatherBindings()
         
-        // 获取天气数据
-        weatherService.fetchWeather()
+        // 获取位置和天气数据
+        locationService.fetchLocation()
     }
     
     // 缓存上一次计算的年月

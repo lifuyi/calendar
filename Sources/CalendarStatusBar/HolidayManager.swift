@@ -13,7 +13,6 @@ final class HolidayManager {
     private init() {
         if let data = loadHolidayData() {
             defaultData = data
-        } else {
         }
     }
     
@@ -26,10 +25,7 @@ final class HolidayManager {
         return nil
     }
     
-    // MARK: - Private
-    
     private func loadHolidayData() -> [String: [String: Int]]? {
-        
         // Try to get the resource URL
         var url: URL?
         
@@ -46,7 +42,6 @@ final class HolidayManager {
         guard let url = url else {
             return nil
         }
-        
         
         do {
             let data = try Data(contentsOf: url)

@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 // 天气服务类，用于获取和解析天气数据
 class WeatherService: ObservableObject {
@@ -15,6 +16,12 @@ class WeatherService: ObservableObject {
     // 位置信息
     private var latitude: Double
     private var longitude: Double
+    
+    // 定位服务
+    private var locationService: IPLocationService?
+    
+    // 用于管理Combine订阅
+    private var cancellables = Set<AnyCancellable>()
     
     // 天气代码映射到描述
     private let weatherCodes: [Int: String] = [
@@ -54,6 +61,22 @@ class WeatherService: ObservableObject {
         self.longitude = longitude
     }
     
+    // 设置定位服务
+    func setLocationService(_ service: IPLocationService) {
+        self.locationService = service
+        
+        // 监听位置变化
+        service.$latitude.sink { [weak self] newLatitude in
+            self?.latitude = newLatitude
+            self?.fetchWeather()
+        }.store(in: &self.cancellables)
+        
+        service.$longitude.sink { [weak self] newLongitude in
+            self?.longitude = newLongitude
+            self?.fetchWeather()
+        }.store(in: &self.cancellables)
+    }
+    
     // 更新位置信息
     func updateLocation(latitude: Double, longitude: Double) {
         self.latitude = latitude
@@ -62,11 +85,18 @@ class WeatherService: ObservableObject {
     
     // 获取天气数据
     func fetchWeather() {
+        // 检查是否有有效的经纬度
+        if latitude == 0.0 && longitude == 0.0 {
+            // 如果没有有效的经纬度，先尝试获取位置
+            locationService?.fetchLocation()
+            return
+        }
+        
         isLoading = true
         errorMessage = nil
         
         // 构建URL
-        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,surface_pressure&timezone=auto"
+        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)¤t=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,surface_pressure&timezone=auto"
         
         guard let url = URL(string: urlString) else {
             self.errorMessage = "无效的URL"

@@ -76,6 +76,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // 初始化IP位置服务
         ipLocationService = IPLocationService()
+        
+        // 获取位置信息
+        ipLocationService?.fetchLocation()
     }
     
     // 拆分设置UI的逻辑
@@ -128,11 +131,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ) { [weak self] _ in
             if let button = self?.statusItem?.button {
                 self?.updateStatusBarButton(button)
-                // 更新 CalendarViewModel 中的 currentDate
-                DispatchQueue.main.async {
-                    if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
-                        calendarView.viewModel.currentDate = Date()
-                    }
+            }
+            
+            // 更新 CalendarViewModel 中的 currentDate
+            DispatchQueue.main.async {
+                if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
+                    calendarView.viewModel.currentDate = Date()
                 }
             }
         }
