@@ -26,20 +26,8 @@ final class HolidayManager {
     }
     
     private func loadHolidayData() -> [String: [String: Int]]? {
-        // Try to get the resource URL
-        var url: URL?
-        
-        // First try Bundle.module (for Swift packages)
-        #if canImport(SwiftUI)
-        url = Bundle.module.url(forResource: "mainland-china", withExtension: "json")
-        #endif
-        
-        // If that doesn't work, try the main bundle
-        if url == nil {
-            url = Bundle.main.url(forResource: "mainland-china", withExtension: "json")
-        }
-        
-        guard let url = url else {
+        // Get the resource URL from the main bundle
+        guard let url = Bundle.main.url(forResource: "mainland-china", withExtension: "json") else {
             return nil
         }
         
