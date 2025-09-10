@@ -1,11 +1,16 @@
 import SwiftUI
 import AppKit
+import EventKit
 
 struct CalendarView: View {
     @ObservedObject var viewModel = CalendarViewModel()
     @StateObject private var eventManager = EventManager.shared
     @StateObject private var themeManager = ThemeManager.shared
     @State private var isEventsDrawerExpanded = false
+    @State private var showEventCreationPopup = false
+    @State private var showEventListPopup = false
+    @State private var selectedDateForEvent = Date()
+    @State private var eventsForSelectedDate: [EKEvent] = []
     
     // 格式化日期
     private var formattedDate: String {
@@ -158,10 +163,55 @@ struct CalendarView: View {
                     .padding(.horizontal, 20)
                     .zIndex(1) // 确保抽屉在其他内容之上
             }
+            
+            // Event creation popup
+            if showEventCreationPopup {
+                Color.black.opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        showEventCreationPopup = false
+                    }
+                
+                VStack {
+                    EventCreationView(isPresented: $showEventCreationPopup, selectedDate: selectedDateForEvent)
+                        .frame(width: 300)
+                        .background(themeManager.currentTheme.backgroundColor)
+                        .cornerRadius(10)
+                        .shadow(radius: 10)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            
+            // Event list popup
+            if showEventListPopup {
+                Color.black.opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        showEventListPopup = false
+                    }
+                
+                VStack {
+                    EventListView(date: selectedDateForEvent, events: eventsForSelectedDate, isPresented: $showEventListPopup)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .onChange(of: viewModel.currentDate) { _ in
             // 视图将自动响应 viewModel.currentDate 的变化
             eventManager.loadTodayEvents()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .showEventCreationPopup)) { notification in
+            if let date = notification.object as? Date {
+                selectedDateForEvent = date
+                showEventCreationPopup = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .showEventListPopup)) { notification in
+            if let date = notification.object as? Date {
+                selectedDateForEvent = date
+                eventsForSelectedDate = eventManager.loadEvents(for: date)
+                showEventListPopup = true
+            }
         }
     }
 }

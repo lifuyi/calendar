@@ -6,7 +6,7 @@ import AppKit
 class EventManager: ObservableObject {
     static let shared = EventManager()
     
-    private var eventStore = EKEventStore()
+    private(set) var eventStore = EKEventStore()
     @Published var todayEvents: [EKEvent] = []
     @Published var isAuthorized = false
     @Published var authorizationError: String? = nil
@@ -102,6 +102,23 @@ class EventManager: ObservableObject {
         
         let events = eventStore.events(matching: predicate)
         self.todayEvents = events.sorted { $0.startDate < $1.startDate }
+    }
+    
+    func loadEvents(for date: Date) -> [EKEvent] {
+        guard isAuthorized else { return [] }
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let predicate = eventStore.predicateForEvents(
+            withStart: startOfDay,
+            end: endOfDay,
+            calendars: nil
+        )
+        
+        let events = eventStore.events(matching: predicate)
+        return events.sorted { $0.startDate < $1.startDate }
     }
     
     /// Force re-request calendar access

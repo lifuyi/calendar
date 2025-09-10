@@ -178,5 +178,13 @@ struct CalendarDayView: View {
         .background(
             isToday ? todayBackgroundColor : Color.clear
         )
+        .onTapGesture(count: 1) {
+            // Single-click to show event list
+            NotificationCenter.default.post(name: .showEventListPopup, object: day.date)
+        }
+        .onTapGesture(count: 2) {
+            // Double-click to show event creation popup
+            NotificationCenter.default.post(name: .showEventCreationPopup, object: day.date)
+        }
     }
 }
