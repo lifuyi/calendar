@@ -237,6 +237,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
+        // Blur effect submenu
+        let blurMenu = NSMenu(title: "毛玻璃效果")
+        let blurItem = NSMenuItem(title: "毛玻璃效果", action: nil, keyEquivalent: "")
+        blurItem.submenu = blurMenu
+        
+        // Blur enabled toggle
+        let blurEnabledItem = NSMenuItem(title: "启用毛玻璃效果", action: #selector(toggleBlurEffect(_:)), keyEquivalent: "")
+        blurEnabledItem.state = ThemeManager.shared.currentTheme.blurEnabled ? .on : .off
+        blurMenu.addItem(blurEnabledItem)
+        
+        // Blur opacity slider submenu
+        let opacityMenu = NSMenu(title: "透明度")
+        let opacityItem = NSMenuItem(title: "透明度", action: nil, keyEquivalent: "")
+        opacityItem.submenu = opacityMenu
+        
+        // Add opacity options (20%, 40%, 60%, 80%, 100%)
+        let opacities = [0.2, 0.4, 0.6, 0.8, 1.0]
+        let currentOpacity = ThemeManager.shared.currentTheme.blurOpacity
+        for opacity in opacities {
+            let opacityTitle = "\(Int(opacity * 100))%"
+            let opacityMenuItem = NSMenuItem(title: opacityTitle, action: #selector(setBlurOpacity(_:)), keyEquivalent: "")
+            opacityMenuItem.representedObject = opacity
+            opacityMenuItem.state = (abs(currentOpacity - opacity) < 0.01) ? .on : .off
+            opacityMenu.addItem(opacityMenuItem)
+        }
+        
+        blurMenu.addItem(opacityItem)
+        
+        menu.addItem(blurItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
         // GitHub link
         let githubItem = NSMenuItem(title: "GitHub", action: #selector(openGitHub(_:)), keyEquivalent: "")
         menu.addItem(githubItem)
@@ -271,6 +303,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             for item in themeMenu.items {
                 if let itemThemeRawValue = item.representedObject as? String {
                     item.state = (itemThemeRawValue == themeType.rawValue) ? .on : .off
+                }
+            }
+        }
+    }
+    
+    @objc private func toggleBlurEffect(_ sender: AnyObject?) {
+        let themeManager = ThemeManager.shared
+        let newEnabledState = !themeManager.currentTheme.blurEnabled
+        themeManager.setBlurEffect(enabled: newEnabledState, opacity: themeManager.currentTheme.blurOpacity)
+        
+        // 更新菜单项状态
+        if let menuItem = sender as? NSMenuItem {
+            menuItem.state = newEnabledState ? .on : .off
+        }
+    }
+    
+    @objc private func setBlurOpacity(_ sender: AnyObject?) {
+        guard let menuItem = sender as? NSMenuItem,
+              let opacity = menuItem.representedObject as? Double else {
+            return
+        }
+        
+        let themeManager = ThemeManager.shared
+        themeManager.setBlurEffect(enabled: themeManager.currentTheme.blurEnabled, opacity: opacity)
+        
+        // 更新菜单项状态
+        if let opacityMenu = (sender as? NSMenuItem)?.menu {
+            for item in opacityMenu.items {
+                if let itemOpacity = item.representedObject as? Double {
+                    item.state = (abs(itemOpacity - opacity) < 0.01) ? .on : .off
                 }
             }
         }

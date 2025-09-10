@@ -92,6 +92,11 @@ struct CalendarView: View {
                     }
                     .frame(maxHeight: .infinity, alignment: .top)
                     .background(themeManager.currentTheme.backgroundColor)
+                    .background(
+                        themeManager.currentTheme.blurEnabled ?
+                        VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity) :
+                        nil
+                    )
                     
                     // 右侧信息面板
                     VStack(alignment: .leading, spacing: 10) {
@@ -119,6 +124,11 @@ struct CalendarView: View {
                     .frame(maxWidth: 150, maxHeight: .infinity, alignment: .top)
                     .padding()
                     .background(themeManager.currentTheme.gridBackgroundColor)
+                    .background(
+                        themeManager.currentTheme.blurEnabled ?
+                        VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity) :
+                        nil
+                    )
                 }
                 
                 // Add a button to manually request calendar access if needed
@@ -134,6 +144,11 @@ struct CalendarView: View {
             }
             .padding()
             .background(themeManager.currentTheme.backgroundColor)
+            .background(
+                themeManager.currentTheme.blurEnabled ?
+                VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity) :
+                nil
+            )
             
             // 悬浮式事件抽屉
             VStack {

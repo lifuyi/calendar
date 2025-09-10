@@ -37,6 +37,10 @@ struct Theme {
     let workdayColor: Color
     let solarTermColor: Color
     
+    // 毛玻璃效果属性
+    let blurEnabled: Bool
+    let blurOpacity: Double
+    
     // 预设主题
     static let light = Theme(
         type: .light,
@@ -50,7 +54,9 @@ struct Theme {
         todayBackgroundColor: Color.blue.opacity(0.3),
         todayTextColor: Color.blue,
         workdayColor: Color.orange,
-        solarTermColor: Color.blue
+        solarTermColor: Color.blue,
+        blurEnabled: false,
+        blurOpacity: 0.5
     )
     
     static let dark = Theme(
@@ -65,7 +71,9 @@ struct Theme {
         todayBackgroundColor: Color.blue.opacity(0.3),
         todayTextColor: Color.white,
         workdayColor: Color.orange,
-        solarTermColor: Color.blue
+        solarTermColor: Color.blue,
+        blurEnabled: false,
+        blurOpacity: 0.5
     )
     
     static let aurora = Theme(
@@ -80,7 +88,9 @@ struct Theme {
         todayBackgroundColor: Color(red: 0.3, green: 0.7, blue: 0.5).opacity(0.3),
         todayTextColor: Color.white,
         workdayColor: Color.orange,
-        solarTermColor: Color(red: 0.4, green: 0.9, blue: 0.8)
+        solarTermColor: Color(red: 0.4, green: 0.9, blue: 0.8),
+        blurEnabled: false,
+        blurOpacity: 0.5
     )
     
     static let sunset = Theme(
@@ -95,7 +105,9 @@ struct Theme {
         todayBackgroundColor: Color(red: 1.0, green: 0.6, blue: 0.4).opacity(0.3),
         todayTextColor: Color.white,
         workdayColor: Color.orange,
-        solarTermColor: Color(red: 1.0, green: 0.7, blue: 0.5)
+        solarTermColor: Color(red: 1.0, green: 0.7, blue: 0.5),
+        blurEnabled: false,
+        blurOpacity: 0.5
     )
     
     static let ocean = Theme(
@@ -110,7 +122,9 @@ struct Theme {
         todayBackgroundColor: Color(red: 0.3, green: 0.7, blue: 1.0).opacity(0.3),
         todayTextColor: Color.white,
         workdayColor: Color.orange,
-        solarTermColor: Color(red: 0.5, green: 0.9, blue: 1.0)
+        solarTermColor: Color(red: 0.5, green: 0.9, blue: 1.0),
+        blurEnabled: false,
+        blurOpacity: 0.5
     )
 }
 
@@ -120,6 +134,8 @@ class ThemeManager: ObservableObject {
     @Published var currentTheme: Theme {
         didSet {
             UserDefaults.standard.set(currentTheme.type.rawValue, forKey: "selectedTheme")
+            UserDefaults.standard.set(currentTheme.blurEnabled, forKey: "blurEnabled")
+            UserDefaults.standard.set(currentTheme.blurOpacity, forKey: "blurOpacity")
         }
     }
     
@@ -128,16 +144,74 @@ class ThemeManager: ObservableObject {
         let savedThemeType = UserDefaults.standard.string(forKey: "selectedTheme") ?? ThemeType.system.rawValue
         let themeType = ThemeType(rawValue: savedThemeType) ?? .system
         
+        // 加载毛玻璃效果设置
+        let blurEnabled = UserDefaults.standard.bool(forKey: "blurEnabled")
+        let blurOpacity = UserDefaults.standard.double(forKey: "blurOpacity")
+        
         if themeType == .system {
             // 根据系统外观设置主题
             #if os(macOS)
             let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            currentTheme = isDark ? .dark : .light
+            var theme = isDark ? Theme.dark : Theme.light
+            // 更新主题以包含毛玻璃效果设置
+            theme = Theme(
+                type: theme.type,
+                backgroundColor: theme.backgroundColor,
+                textColor: theme.textColor,
+                secondaryTextColor: theme.secondaryTextColor,
+                accentColor: theme.accentColor,
+                gridBackgroundColor: theme.gridBackgroundColor,
+                weekendColor: theme.weekendColor,
+                holidayColor: theme.holidayColor,
+                todayBackgroundColor: theme.todayBackgroundColor,
+                todayTextColor: theme.todayTextColor,
+                workdayColor: theme.workdayColor,
+                solarTermColor: theme.solarTermColor,
+                blurEnabled: blurEnabled,
+                blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5
+            )
+            currentTheme = theme
             #else
-            currentTheme = .light
+            var theme = Theme.light
+            // 更新主题以包含毛玻璃效果设置
+            theme = Theme(
+                type: theme.type,
+                backgroundColor: theme.backgroundColor,
+                textColor: theme.textColor,
+                secondaryTextColor: theme.secondaryTextColor,
+                accentColor: theme.accentColor,
+                gridBackgroundColor: theme.gridBackgroundColor,
+                weekendColor: theme.weekendColor,
+                holidayColor: theme.holidayColor,
+                todayBackgroundColor: theme.todayBackgroundColor,
+                todayTextColor: theme.todayTextColor,
+                workdayColor: theme.workdayColor,
+                solarTermColor: theme.solarTermColor,
+                blurEnabled: blurEnabled,
+                blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5
+            )
+            currentTheme = theme
             #endif
         } else {
-            currentTheme = ThemeManager.theme(for: themeType)
+            var theme = ThemeManager.theme(for: themeType)
+            // 更新主题以包含毛玻璃效果设置
+            theme = Theme(
+                type: theme.type,
+                backgroundColor: theme.backgroundColor,
+                textColor: theme.textColor,
+                secondaryTextColor: theme.secondaryTextColor,
+                accentColor: theme.accentColor,
+                gridBackgroundColor: theme.gridBackgroundColor,
+                weekendColor: theme.weekendColor,
+                holidayColor: theme.holidayColor,
+                todayBackgroundColor: theme.todayBackgroundColor,
+                todayTextColor: theme.todayTextColor,
+                workdayColor: theme.workdayColor,
+                solarTermColor: theme.solarTermColor,
+                blurEnabled: blurEnabled,
+                blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5
+            )
+            currentTheme = theme
         }
     }
     
@@ -169,12 +243,87 @@ class ThemeManager: ObservableObject {
             // 根据系统外观设置主题
             #if os(macOS)
             let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            currentTheme = isDark ? .dark : .light
+            var theme = isDark ? Theme.dark : Theme.light
+            // 更新主题以包含毛玻璃效果设置
+            theme = Theme(
+                type: theme.type,
+                backgroundColor: theme.backgroundColor,
+                textColor: theme.textColor,
+                secondaryTextColor: theme.secondaryTextColor,
+                accentColor: theme.accentColor,
+                gridBackgroundColor: theme.gridBackgroundColor,
+                weekendColor: theme.weekendColor,
+                holidayColor: theme.holidayColor,
+                todayBackgroundColor: theme.todayBackgroundColor,
+                todayTextColor: theme.todayTextColor,
+                workdayColor: theme.workdayColor,
+                solarTermColor: theme.solarTermColor,
+                blurEnabled: currentTheme.blurEnabled,
+                blurOpacity: currentTheme.blurOpacity
+            )
+            currentTheme = theme
             #else
-            currentTheme = .light
+            var theme = Theme.light
+            // 更新主题以包含毛玻璃效果设置
+            theme = Theme(
+                type: theme.type,
+                backgroundColor: theme.backgroundColor,
+                textColor: theme.textColor,
+                secondaryTextColor: theme.secondaryTextColor,
+                accentColor: theme.accentColor,
+                gridBackgroundColor: theme.gridBackgroundColor,
+                weekendColor: theme.weekendColor,
+                holidayColor: theme.holidayColor,
+                todayBackgroundColor: theme.todayBackgroundColor,
+                todayTextColor: theme.todayTextColor,
+                workdayColor: theme.workdayColor,
+                solarTermColor: theme.solarTermColor,
+                blurEnabled: currentTheme.blurEnabled,
+                blurOpacity: currentTheme.blurOpacity
+            )
+            currentTheme = theme
             #endif
         } else {
-            currentTheme = ThemeManager.theme(for: type)
+            var theme = ThemeManager.theme(for: type)
+            // 更新主题以包含毛玻璃效果设置
+            theme = Theme(
+                type: theme.type,
+                backgroundColor: theme.backgroundColor,
+                textColor: theme.textColor,
+                secondaryTextColor: theme.secondaryTextColor,
+                accentColor: theme.accentColor,
+                gridBackgroundColor: theme.gridBackgroundColor,
+                weekendColor: theme.weekendColor,
+                holidayColor: theme.holidayColor,
+                todayBackgroundColor: theme.todayBackgroundColor,
+                todayTextColor: theme.todayTextColor,
+                workdayColor: theme.workdayColor,
+                solarTermColor: theme.solarTermColor,
+                blurEnabled: currentTheme.blurEnabled,
+                blurOpacity: currentTheme.blurOpacity
+            )
+            currentTheme = theme
         }
+    }
+    
+    /// 设置毛玻璃效果
+    func setBlurEffect(enabled: Bool, opacity: Double) {
+        let theme = Theme(
+            type: currentTheme.type,
+            backgroundColor: currentTheme.backgroundColor,
+            textColor: currentTheme.textColor,
+            secondaryTextColor: currentTheme.secondaryTextColor,
+            accentColor: currentTheme.accentColor,
+            gridBackgroundColor: currentTheme.gridBackgroundColor,
+            weekendColor: currentTheme.weekendColor,
+            holidayColor: currentTheme.holidayColor,
+            todayBackgroundColor: currentTheme.todayBackgroundColor,
+            todayTextColor: currentTheme.todayTextColor,
+            workdayColor: currentTheme.workdayColor,
+            solarTermColor: currentTheme.solarTermColor,
+            blurEnabled: enabled,
+            blurOpacity: opacity
+        )
+        currentTheme = theme
     }
 }
