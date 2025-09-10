@@ -2,13 +2,7 @@ import SwiftUI
 
 struct CalendarGridView: View {
     @ObservedObject var viewModel: CalendarViewModel
-    
-    // 定义颜色常量
-    private let weekendColor = Color(red: 0.6, green: 0.4, blue: 0.2)
-    private let holidayColor = Color.red
-    private let todayBackgroundColor = Color.blue.opacity(0.3)
-    private let todayTextColor = Color.blue
-    private let inactiveTextColor = Color.gray
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 0) {
@@ -21,13 +15,9 @@ struct CalendarGridView: View {
                     day: day,
                     isWeekend: isWeekend,
                     isToday: isToday,
-                    isCurrentMonth: day.isCurrentMonth,
-                    weekendColor: weekendColor,
-                    holidayColor: holidayColor,
-                    todayBackgroundColor: todayBackgroundColor,
-                    todayTextColor: todayTextColor,
-                    inactiveTextColor: inactiveTextColor
+                    isCurrentMonth: day.isCurrentMonth
                 )
+                .environmentObject(themeManager)
             }
         }
     }
@@ -38,11 +28,7 @@ struct CalendarDayView: View {
     let isWeekend: Bool
     let isToday: Bool
     let isCurrentMonth: Bool
-    let weekendColor: Color
-    let holidayColor: Color
-    let todayBackgroundColor: Color
-    let todayTextColor: Color
-    let inactiveTextColor: Color
+    @EnvironmentObject private var themeManager: ThemeManager
     
     // 计算属性，用于判断是否为节假日
     private var isHoliday: Bool {
@@ -61,6 +47,15 @@ struct CalendarDayView: View {
         // 使用 ChineseCalendarHelper 的同步方法
         return ChineseCalendarHelper.holidayNameSync(for: day.date)
     }
+    
+    // 获取主题颜色
+    private var weekendColor: Color { themeManager.currentTheme.weekendColor }
+    private var holidayColor: Color { themeManager.currentTheme.holidayColor }
+    private var todayBackgroundColor: Color { themeManager.currentTheme.todayBackgroundColor }
+    private var todayTextColor: Color { themeManager.currentTheme.todayTextColor }
+    private var inactiveTextColor: Color { themeManager.currentTheme.secondaryTextColor }
+    private var workdayColor: Color { themeManager.currentTheme.workdayColor }
+    private var solarTermColor: Color { themeManager.currentTheme.solarTermColor }
     
     // 判断是否为公共假日第一天
     private func isFirstDayOfHoliday(_ date: Date) -> Bool {
@@ -128,7 +123,7 @@ struct CalendarDayView: View {
                         .padding(.vertical, 1)
                         .background(
                             RoundedRectangle(cornerRadius: 3)
-                                .fill(Color.orange)
+                                .fill(workdayColor)
                         )
                 } else {
                     // 占位符，保持布局一致。最后试验没有占位符好看
@@ -143,7 +138,7 @@ struct CalendarDayView: View {
                             isToday ? todayTextColor :
                                 isHoliday ? holidayColor :
                                 isWeekend && isCurrentMonth ? weekendColor :
-                                isCurrentMonth ? .primary : inactiveTextColor
+                                isCurrentMonth ? themeManager.currentTheme.textColor : inactiveTextColor
                         )
                 }
             }
@@ -163,7 +158,7 @@ struct CalendarDayView: View {
                     // 有节气时只显示节气
                     Text(termName)
                         .font(.system(size: 9))
-                        .foregroundColor(.blue)
+                        .foregroundColor(solarTermColor)
                 } else {
                     // 没有节日和节气时显示农历日期
                     // 农历显示规则：只显示一个农历内容
@@ -172,7 +167,7 @@ struct CalendarDayView: View {
                     // 3. 其他情况显示农历日期
                     Text(getLunarDisplayText(for: day.date))
                         .font(.system(size: 9))
-                        .foregroundColor(isCurrentMonth ? .primary : inactiveTextColor)
+                        .foregroundColor(isCurrentMonth ? themeManager.currentTheme.textColor : inactiveTextColor)
                 }
                 
                 Spacer()

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CalendarHeaderView: View {
     @ObservedObject var viewModel: CalendarViewModel
+    @StateObject private var themeManager = ThemeManager.shared
     private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
 
     var body: some View {
@@ -17,13 +18,13 @@ struct CalendarHeaderView: View {
                 .frame(width: 85, height: 20) // 限制高度
                 .clipped() // 裁剪超出部分
                 .labelsHidden()
-                .foregroundColor(.primary)
+                .foregroundColor(themeManager.currentTheme.textColor)
                 
                 // 月份切换按钮
                 Button(action: viewModel.previousMonth) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .buttonStyle(.plain)
                 .frame(width: 30, height: 30)
@@ -32,11 +33,12 @@ struct CalendarHeaderView: View {
                 Text("\(viewModel.selectedMonth)月")
                     .font(.system(size: 20, weight: .bold))
                     .font(.custom(customFont, size: 11))
+                    .foregroundColor(themeManager.currentTheme.textColor)
                 
                 Button(action: viewModel.nextMonth) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .buttonStyle(.plain)
                 .frame(width: 30, height: 30)
@@ -44,7 +46,7 @@ struct CalendarHeaderView: View {
                 
                 Button(action: viewModel.goToToday) {
                     Text("回到今天")
-                        .foregroundColor(.blue.opacity(0.8))
+                        .foregroundColor(themeManager.currentTheme.accentColor.opacity(0.8))
                         .font(.custom(customFont, size: 13))
                 }
                 .buttonStyle(.plain)
@@ -56,7 +58,7 @@ struct CalendarHeaderView: View {
                 ForEach(["周日", "周一", "周二", "周三", "周四", "周五", "周六"], id: \.self) { weekday in
                     Text(weekday)
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(viewModel.isWeekend(weekday) ? Color(red: 0.6, green: 0.4, blue: 0.2) : .secondary)
+                        .foregroundColor(viewModel.isWeekend(weekday) ? themeManager.currentTheme.weekendColor : themeManager.currentTheme.secondaryTextColor)
                         .font(.custom(customFont, size: 15))
                 }
             }

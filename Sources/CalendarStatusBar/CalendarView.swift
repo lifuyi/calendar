@@ -4,6 +4,7 @@ import AppKit
 struct CalendarView: View {
     @ObservedObject var viewModel = CalendarViewModel()
     @StateObject private var eventManager = EventManager.shared
+    @StateObject private var themeManager = ThemeManager.shared
     @State private var isEventsDrawerExpanded = false
     
     // 格式化日期
@@ -80,16 +81,17 @@ struct CalendarView: View {
                         HStack {
                             Text("第\(viewModel.dayOfYear)天·第\(viewModel.weekOfYear)周 \(viewModel.zodiacSign)\(getZodiacEmoji(for: viewModel.currentDate))")
                                 .font(.custom(customFont, size: 11))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             Spacer()
                             Text("\(viewModel.zodiacMonth)月 \(viewModel.zodiacYear)\(getAnimalEmoji(for: viewModel.currentDate))")
                                 .font(.custom(customFont, size: 11))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                         }
                         .frame(width: 300)
                         .padding(.horizontal)
                     }
                     .frame(maxHeight: .infinity, alignment: .top)
+                    .background(themeManager.currentTheme.backgroundColor)
                     
                     // 右侧信息面板
                     VStack(alignment: .leading, spacing: 10) {
@@ -97,6 +99,7 @@ struct CalendarView: View {
                         HStack {
                             Text("\(formattedDate)")
                                 .font(.custom(customFont, size: 12))
+                                .foregroundColor(themeManager.currentTheme.textColor)
                             Spacer()
                             // 设置按钮
                             Button(action: {
@@ -105,6 +108,7 @@ struct CalendarView: View {
                             }) {
                                 Image(systemName: "gear")
                                     .font(.system(size: 12))
+                                    .foregroundColor(themeManager.currentTheme.textColor)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -114,6 +118,7 @@ struct CalendarView: View {
                     }
                     .frame(maxWidth: 150, maxHeight: .infinity, alignment: .top)
                     .padding()
+                    .background(themeManager.currentTheme.gridBackgroundColor)
                 }
                 
                 // Add a button to manually request calendar access if needed
@@ -124,10 +129,11 @@ struct CalendarView: View {
                     .font(.caption)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
+                    .foregroundColor(themeManager.currentTheme.textColor)
                 }
             }
             .padding()
-            // .frame(minWidth: 600, idealWidth: 800, maxWidth: .infinity, minHeight: 250, idealHeight: 350, maxHeight: .infinity)
+            .background(themeManager.currentTheme.backgroundColor)
             
             // 悬浮式事件抽屉
             VStack {

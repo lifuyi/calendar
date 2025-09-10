@@ -4,6 +4,7 @@ import AppKit
 
 struct EventRowView: View {
     let event: EKEvent
+    @EnvironmentObject private var themeManager: ThemeManager
     
     var body: some View {
         HStack {
@@ -17,6 +18,7 @@ struct EventRowView: View {
                     .font(.caption)
                     .fontWeight(.medium)
                     .lineLimit(1)
+                    .foregroundColor(themeManager.currentTheme.textColor)
                 
                 // Time range
                 if let startDate = event.startDate, let endDate = event.endDate {
@@ -28,13 +30,13 @@ struct EventRowView: View {
                         }
                     }
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 
                 // Calendar name
                 Text(event.calendar.title)
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     .lineLimit(1)
             }
             
@@ -64,6 +66,7 @@ struct EventRowView: View {
 struct EventsDrawerView: View {
     @ObservedObject var eventManager: EventManager
     @Binding var isExpanded: Bool
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -72,6 +75,7 @@ struct EventsDrawerView: View {
                 Text("今日事件")
                     .font(.headline)
                     .fontWeight(.medium)
+                    .foregroundColor(themeManager.currentTheme.textColor)
                 
                 Spacer()
                 
@@ -82,12 +86,13 @@ struct EventsDrawerView: View {
                 }) {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.up")
                         .font(.caption)
+                        .foregroundColor(themeManager.currentTheme.textColor)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            .background(Color.gray.opacity(0.2))
+            .background(themeManager.currentTheme.gridBackgroundColor)
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()
@@ -102,11 +107,11 @@ struct EventsDrawerView: View {
                         Text("权限错误")
                             .font(.caption)
                             .fontWeight(.bold)
-                            .foregroundColor(.red)
+                            .foregroundColor(themeManager.currentTheme.holidayColor)
                         
                         Text(errorMessage)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             .fixedSize(horizontal: false, vertical: true)
                         
                         VStack(spacing: 8) {
@@ -115,12 +120,14 @@ struct EventsDrawerView: View {
                             }
                             .font(.caption)
                             .frame(maxWidth: .infinity)
+                            .foregroundColor(themeManager.currentTheme.textColor)
                             
                             Button("打开系统设置") {
                                 eventManager.openCalendarPrivacySettings()
                             }
                             .font(.caption)
                             .frame(maxWidth: .infinity)
+                            .foregroundColor(themeManager.currentTheme.textColor)
                         }
                     }
                     .padding()
@@ -128,7 +135,7 @@ struct EventsDrawerView: View {
                 } else if eventManager.todayEvents.isEmpty {
                     Text("今天没有事件")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .frame(minHeight: 50) // Set a minimum height for empty state
@@ -137,6 +144,7 @@ struct EventsDrawerView: View {
                         LazyVStack(alignment: .leading, spacing: 8) {
                             ForEach(eventManager.todayEvents, id: \.eventIdentifier) { event in
                                 EventRowView(event: event)
+                                    .environmentObject(themeManager)
                             }
                         }
                         .padding(.horizontal)
@@ -149,7 +157,7 @@ struct EventsDrawerView: View {
         .frame(maxWidth: .infinity)
         .frame(height: isExpanded ? 200 : 30, alignment: .top) // Fixed height when expanded
         .animation(.easeInOut, value: isExpanded)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(themeManager.currentTheme.backgroundColor)
         .cornerRadius(8)
         .shadow(radius: 5)
         .padding(.bottom, 20) // 添加底部边距确保可见

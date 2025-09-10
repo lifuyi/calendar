@@ -79,6 +79,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // 获取位置信息
         ipLocationService?.fetchLocation()
+        
+        // 初始化主题管理器
+        _ = ThemeManager.shared
     }
     
     // 拆分设置UI的逻辑
@@ -216,6 +219,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
+        // Theme selection submenu
+        let themeMenu = NSMenu(title: "主题")
+        let themeItem = NSMenuItem(title: "主题", action: nil, keyEquivalent: "")
+        themeItem.submenu = themeMenu
+        
+        // Add theme options
+        let currentTheme = ThemeManager.shared.currentTheme.type
+        for themeType in ThemeType.allCases {
+            let item = NSMenuItem(title: themeType.displayName, action: #selector(selectTheme(_:)), keyEquivalent: "")
+            item.representedObject = themeType.rawValue
+            item.state = (currentTheme == themeType) ? .on : .off
+            themeMenu.addItem(item)
+        }
+        
+        menu.addItem(themeItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
         // GitHub link
         let githubItem = NSMenuItem(title: "GitHub", action: #selector(openGitHub(_:)), keyEquivalent: "")
         menu.addItem(githubItem)
@@ -233,6 +254,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Show menu
         menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
+    }
+    
+    @objc private func selectTheme(_ sender: AnyObject?) {
+        guard let menuItem = sender as? NSMenuItem,
+              let themeRawValue = menuItem.representedObject as? String,
+              let themeType = ThemeType(rawValue: themeRawValue) else {
+            return
+        }
+        
+        // 更新主题
+        ThemeManager.shared.setTheme(themeType)
+        
+        // 更新菜单项状态
+        if let themeMenu = (sender as? NSMenuItem)?.submenu {
+            for item in themeMenu.items {
+                if let itemThemeRawValue = item.representedObject as? String {
+                    item.state = (itemThemeRawValue == themeType.rawValue) ? .on : .off
+                }
+            }
+        }
     }
     
     /// 检查应用是否已设置为开机启动
