@@ -14,6 +14,14 @@ struct VisualEffectBlur: NSViewRepresentable {
         view.blendingMode = blendingMode
         view.alphaValue = CGFloat(opacity)
         view.state = .active
+        
+        // Add additional visual effects for more pronounced blur
+        view.maskImage = NSImage(size: CGSize(width: 1, height: 1), flipped: false) { rect in
+            NSColor.black.setFill()
+            rect.fill()
+            return true
+        }
+        
         return view
     }
     
@@ -34,6 +42,14 @@ struct VisualEffectBlur: UIViewRepresentable {
     func makeUIView(context: Context) -> UIVisualEffectView {
         let view = UIVisualEffectView(effect: UIBlurEffect(style: style))
         view.alpha = CGFloat(opacity)
+        
+        // Add vibrancy effect for more pronounced blur
+        let vibrancyEffect = UIVibrancyEffect(blurEffect: UIBlurEffect(style: style))
+        let vibrancyView = UIVisualEffectView(effect: vibrancyEffect)
+        vibrancyView.frame = view.bounds
+        vibrancyView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.contentView.addSubview(vibrancyView)
+        
         return view
     }
     

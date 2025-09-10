@@ -95,6 +95,45 @@ struct EventItemView: View {
         return formatter.string(from: date)
     }
     
+    private func openCalendarApp() {
+        // Try to open the event in Calendar app using the event URL if available
+        if let url = event.url {
+            NSWorkspace.shared.open(url)
+            return
+        }
+        
+        // Fallback: Open Calendar app to the event's date
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.year, .month, .day], from: event.startDate)
+        components.hour = 12
+        components.minute = 0
+        
+        // Create a calendar URL with the date
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let dateString = formatter.string(from: event.startDate)
+        
+        // Try different URL formats for Calendar app
+        let urls = [
+            "calshow:\(Int(event.startDate.timeIntervalSince1970))",
+            "webcal://localhost/event?date=\(dateString)"
+        ]
+        
+        for urlString in urls {
+            if let url = URL(string: urlString) {
+                if NSWorkspace.shared.open(url) {
+                    return
+                }
+            }
+        }
+        
+        // Final fallback: Just open Calendar app
+        if let calendarAppURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Calendar") {
+            NSWorkspace.shared.openApplication(at: calendarAppURL, configuration: NSWorkspace.OpenConfiguration())
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
@@ -151,5 +190,8 @@ struct EventItemView: View {
         .padding(.horizontal, 12)
         .background(themeManager.currentTheme.gridBackgroundColor)
         .cornerRadius(6)
+        .onTapGesture {
+            openCalendarApp()
+        }
     }
 }

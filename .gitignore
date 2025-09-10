@@ -1,5 +1,4 @@
 .build/
-LunarBar-main/
 
 # Build artifacts
 *.app/Contents/MacOS/*
@@ -10,3 +9,5 @@ LunarBar-main/
 # Xcode
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
+Sources/CalendarStatusBar/wechat_2025-09-10_173333_177.png
+CalendarStatusBar.app/Contents/MacOS/CalendarStatusBar

@@ -252,8 +252,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let opacityItem = NSMenuItem(title: "透明度", action: nil, keyEquivalent: "")
         opacityItem.submenu = opacityMenu
         
-        // Add opacity options (20%, 40%, 60%, 80%, 100%)
-        let opacities = [0.2, 0.4, 0.6, 0.8, 1.0]
+        // Add opacity options (20%, 40%, 60%, 80%, 100%, 120%, 150%)
+        let opacities = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5]
         let currentOpacity = ThemeManager.shared.currentTheme.blurOpacity
         for opacity in opacities {
             let opacityTitle = "\(Int(opacity * 100))%"

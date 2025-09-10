@@ -99,7 +99,10 @@ struct CalendarView: View {
                     .background(themeManager.currentTheme.backgroundColor)
                     .background(
                         themeManager.currentTheme.blurEnabled ?
-                        VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity) :
+                        ZStack {
+                            VisualEffectBlur(material: .fullScreenUI, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+                            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.7)
+                        } :
                         nil
                     )
                     
@@ -131,7 +134,10 @@ struct CalendarView: View {
                     .background(themeManager.currentTheme.gridBackgroundColor)
                     .background(
                         themeManager.currentTheme.blurEnabled ?
-                        VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity) :
+                        ZStack {
+                            VisualEffectBlur(material: .fullScreenUI, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+                            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.7)
+                        } :
                         nil
                     )
                 }
@@ -151,7 +157,10 @@ struct CalendarView: View {
             .background(themeManager.currentTheme.backgroundColor)
             .background(
                 themeManager.currentTheme.blurEnabled ?
-                VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity) :
+                ZStack {
+                    VisualEffectBlur(material: .fullScreenUI, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+                    VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.7)
+                } :
                 nil
             )
             
