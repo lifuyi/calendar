@@ -10,6 +10,8 @@
 - 中国法定节假日和节气标记
 - 当天日历事件显示（需要用户授权）
 - 天气信息显示（温度、天气状况、湿度、气压、降水量、体感温度）
+- 毛玻璃视觉效果（可调节透明度）
+- 事件创建和管理功能
 
 ## 技术栈
 
@@ -32,10 +34,15 @@ calendar/
 │       ├── CalendarViewModel.swift # 日历视图模型
 │       ├── EventsDrawerView.swift  # 事件抽屉视图
 │       ├── EventManager.swift     # 日历事件管理器
+│       ├── EventCreationView.swift # 事件创建视图
+│       ├── EventListView.swift    # 事件列表视图
 │       ├── WeatherPanelView.swift  # 天气面板视图
 │       ├── WeatherService.swift   # 天气服务
 │       ├── ChineseCalendarHelper.swift # 农历助手
 │       ├── HolidayManager.swift   # 节假日管理器
+│       ├── ThemeManager.swift     # 主题管理器
+│       ├── VisualEffectBlur.swift # 毛玻璃效果视图
+│       ├── NotificationExtension.swift # 通知扩展
 │       ├── DayInfo.swift          # 日期信息模型
 │       ├── Info.plist             # 应用配置文件
 │       ├── assets/                # 资源文件（字体等）
@@ -84,6 +91,8 @@ swift run
 ### 2. 日历事件模块
 - **EventManager**: 管理日历事件访问权限和事件加载
 - **EventsDrawerView**: 显示当天日历事件的抽屉视图
+- **EventCreationView**: 创建新事件的视图
+- **EventListView**: 显示指定日期事件列表的视图
 
 ### 3. 天气信息模块
 - **WeatherService**: 获取和解析天气数据
@@ -93,6 +102,28 @@ swift run
 - **ChineseCalendarHelper**: 处理农历日期、生肖、节气等计算
 - **HolidayManager**: 管理法定节假日和调休数据
 - **mainland-china.json**: 包含中国节假日和调休数据
+
+### 5. 主题和视觉效果模块
+- **ThemeManager**: 管理应用主题和视觉效果设置
+- **VisualEffectBlur**: 实现毛玻璃视觉效果的视图
+
+## 使用说明
+
+### 毛玻璃效果
+- 在设置菜单中可以启用/禁用毛玻璃效果
+- 可以调节透明度（20%、40%、60%、80%、100%、120%、150%）
+- 效果应用于日历视图的背景和面板
+
+### 事件管理
+- 双击任意日期可打开事件创建窗口
+- 单击任意日期可查看该日期的事件列表
+- 点击事件列表中的事件可打开macOS日历应用查看详细信息
+- 事件创建窗口支持设置标题、类型、时间、持续时间、描述和标签
+
+### 主题设置
+- 支持多种预设主题（浅色、深色、极光、日落、海洋）
+- 支持跟随系统主题
+- 主题设置会自动保存并在下次启动时恢复
 
 ## 开发约定
 
@@ -124,6 +155,12 @@ swift run
 1. 检查网络连接
 2. 确认可以访问 https://api.open-meteo.com
 3. 查看控制台输出的错误信息
+
+### 毛玻璃效果不明显
+如果毛玻璃效果不够明显：
+1. 确保在设置中已启用毛玻璃效果
+2. 尝试调整透明度到更高值（120%或150%）
+3. 确保桌面背景有足够的视觉复杂度以显示效果
 
 ## 未来开发计划
 
