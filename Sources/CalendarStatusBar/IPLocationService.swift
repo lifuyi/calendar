@@ -3,6 +3,9 @@ import CoreLocation
 
 // IP地理位置服务类，用于通过外部IP获取位置信息
 class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
+    // 单例实例
+    static let shared = IPLocationService()
+    
     // 发布属性，用于在UI中显示位置信息
     @Published var latitude: Double = 0.0
     @Published var longitude: Double = 0.0
@@ -12,6 +15,11 @@ class IPLocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     // Core Location管理器
     private var locationManager: CLLocationManager?
+    
+    // 私有初始化方法，防止外部创建实例
+    private override init() {
+        super.init()
+    }
     
     // 获取位置信息
     func fetchLocation() {

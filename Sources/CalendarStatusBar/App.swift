@@ -74,8 +74,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Initialize EventManager to request calendar access
         _ = EventManager.shared
         
-        // 初始化IP位置服务
-        ipLocationService = IPLocationService()
+        // 使用共享的IP位置服务实例
+        ipLocationService = IPLocationService.shared
         
         // 获取位置信息
         ipLocationService?.fetchLocation()

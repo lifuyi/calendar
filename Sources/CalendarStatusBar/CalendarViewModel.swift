@@ -40,8 +40,8 @@ class CalendarViewModel: ObservableObject {
     init() {
         let calendar = Calendar.current
         let currentDate = Date()
-        // 初始化定位服务
-        locationService = IPLocationService()
+        // 使用共享的定位服务实例
+        locationService = IPLocationService.shared
         
         // 初始化天气服务，使用当前位置作为默认值
         weatherService = WeatherService(latitude: locationService.latitude, longitude: locationService.longitude)
@@ -56,8 +56,7 @@ class CalendarViewModel: ObservableObject {
         // 设置天气数据更新回调
         setupWeatherBindings()
         
-        // 获取位置和天气数据
-        locationService.fetchLocation()
+        // 不再在这里调用 fetchLocation，因为 AppDelegate 已经调用了
     }
     
     // 缓存上一次计算的年月
