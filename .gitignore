@@ -11,3 +11,5 @@
 *.xcworkspace/xcuserdata/
 Sources/CalendarStatusBar/wechat_2025-09-10_173333_177.png
 CalendarStatusBar.app/Contents/MacOS/CalendarStatusBar
+CalendarStatusBar.app
+CalendarStatusBar.dmg
