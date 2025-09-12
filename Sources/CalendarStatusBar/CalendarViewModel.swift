@@ -299,8 +299,6 @@ class CalendarViewModel: ObservableObject {
     }
     
     // 获取当前年份的天干地支和生肖
-    
-    // 获取当前年份的天干地支和生肖
     var zodiacYear: String {
         return ChineseCalendarHelper.getChineseYearText(for: currentDate)
     }

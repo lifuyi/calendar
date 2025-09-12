@@ -208,6 +208,8 @@ struct CalendarView: View {
         .onChange(of: viewModel.currentDate) { _ in
             // 视图将自动响应 viewModel.currentDate 的变化
             eventManager.loadTodayEvents()
+            // 强制刷新视图以更新日期相关信息
+            viewModel.objectWillChange.send()
         }
         .onReceive(NotificationCenter.default.publisher(for: .showEventCreationPopup)) { notification in
             if let date = notification.object as? Date {
