@@ -144,14 +144,9 @@ class CalendarViewModel: ObservableObject {
         return weekday == 1 || weekday == 7 // 1是周日，7是周六
     }
     
-    // 缓存今天的日期组件
-    private lazy var todayComponents: DateComponents = {
-        let today = Date()
-        return calendar.dateComponents([.year, .month, .day], from: today)
-    }()
-    
-    // 优化判断是否为今天的方法
+    // 优化判断是否为今天的方法 - 使用 currentDate 而不是缓存的组件
     func isToday(_ date: Date) -> Bool {
+        let todayComponents = calendar.dateComponents([.year, .month, .day], from: currentDate)
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         return components.year == todayComponents.year &&
                components.month == todayComponents.month &&
@@ -291,9 +286,8 @@ class CalendarViewModel: ObservableObject {
     
     // 回到今天
     func goToToday() {
-        let today = Date()
-        selectedYear = calendar.component(.year, from: today)
-        selectedMonth = calendar.component(.month, from: today)
+        selectedYear = calendar.component(.year, from: currentDate)
+        selectedMonth = calendar.component(.month, from: currentDate)
         updateDays()
     }
     

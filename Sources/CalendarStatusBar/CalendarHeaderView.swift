@@ -15,11 +15,11 @@ struct CalendarHeaderView: View {
                         Text(String(year) + "年").tag(year)
                     }
                 }
-                .frame(width: 85, height: 20) // 限制高度
-                .clipped() // 裁剪超出部分
+                .frame(width: 85, height: 20)  // 限制高度
+                .clipped()  // 裁剪超出部分
                 .labelsHidden()
                 .foregroundColor(themeManager.currentTheme.textColor)
-                
+
                 // 月份切换按钮
                 Button(action: viewModel.previousMonth) {
                     Image(systemName: "chevron.left")
@@ -34,7 +34,7 @@ struct CalendarHeaderView: View {
                     .font(.system(size: 20, weight: .bold))
                     .font(.custom(customFont, size: 11))
                     .foregroundColor(themeManager.currentTheme.textColor)
-                
+
                 Button(action: viewModel.nextMonth) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
@@ -43,7 +43,7 @@ struct CalendarHeaderView: View {
                 .buttonStyle(.plain)
                 .frame(width: 30, height: 30)
                 .contentShape(Rectangle())
-                
+
                 Button(action: viewModel.goToToday) {
                     Text("回到今天")
                         .foregroundColor(themeManager.currentTheme.accentColor.opacity(0.8))
@@ -52,13 +52,17 @@ struct CalendarHeaderView: View {
                 .buttonStyle(.plain)
             }
             .padding(.horizontal)
-            
+
             // 星期标题
             HStack(spacing: 0) {
                 ForEach(["周日", "周一", "周二", "周三", "周四", "周五", "周六"], id: \.self) { weekday in
                     Text(weekday)
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(viewModel.isWeekend(weekday) ? themeManager.currentTheme.weekendColor : themeManager.currentTheme.secondaryTextColor)
+                        .foregroundColor(
+                            viewModel.isWeekend(weekday)
+                                ? themeManager.currentTheme.weekendColor
+                                : themeManager.currentTheme.secondaryTextColor
+                        )
                         .font(.custom(customFont, size: 15))
                 }
             }

@@ -136,11 +136,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.updateStatusBarButton(button)
             }
             
-            // 更新 CalendarViewModel 中的 currentDate
+            // 更新 CalendarViewModel 中的 currentDate 和 EventManager
             DispatchQueue.main.async {
+                let currentDate = Date()
                 if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
-                    calendarView.viewModel.currentDate = Date()
+                    calendarView.viewModel.currentDate = currentDate
                 }
+                // 同时更新 EventManager 的今日事件
+                EventManager.shared.loadTodayEvents(for: currentDate)
             }
         }
     }

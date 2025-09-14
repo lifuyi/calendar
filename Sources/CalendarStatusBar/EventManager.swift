@@ -86,10 +86,9 @@ class EventManager: ObservableObject {
         }
     }
     
-    func loadTodayEvents() {
+    func loadTodayEvents(for today: Date = Date()) {
         guard isAuthorized else { return }
         
-        let today = Date()
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: today)
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!

@@ -90,13 +90,19 @@ class WeatherService: ObservableObject {
         service.$latitude.sink { [weak self] newLatitude in
             print("WeatherService: 纬度更新为 \(newLatitude)")
             self?.latitude = newLatitude
-            self?.fetchWeather()
+            // 只有当经纬度都有效时才获取天气
+            if let self = self, self.longitude != 0.0 && newLatitude != 0.0 {
+                self.fetchWeather()
+            }
         }.store(in: &self.cancellables)
         
         service.$longitude.sink { [weak self] newLongitude in
             print("WeatherService: 经度更新为 \(newLongitude)")
             self?.longitude = newLongitude
-            self?.fetchWeather()
+            // 只有当经纬度都有效时才获取天气
+            if let self = self, self.latitude != 0.0 && newLongitude != 0.0 {
+                self.fetchWeather()
+            }
         }.store(in: &self.cancellables)
     }
     
@@ -140,9 +146,9 @@ class WeatherService: ObservableObject {
         
         // 检查是否有有效的经纬度
         if latitude == 0.0 && longitude == 0.0 {
-            print("WeatherService: 无效的经纬度，尝试获取位置信息")
-            // 如果没有有效的经纬度，先尝试获取位置
-            locationService?.fetchLocation()
+            print("WeatherService: 无效的经纬度，等待位置服务提供坐标")
+            // 不再主动请求位置，等待位置服务通过绑定更新坐标
+            self.errorMessage = "等待位置信息..."
             return
         }
         

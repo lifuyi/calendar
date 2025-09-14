@@ -39,7 +39,11 @@ struct EventListView: View {
                 .buttonStyle(PlainButtonStyle())
             }
             .padding()
-            .background(themeManager.currentTheme.gridBackgroundColor)
+            .background(
+                themeManager.currentTheme.blurEnabled ?
+                themeManager.currentTheme.backgroundColor.opacity(0.3) :
+                themeManager.currentTheme.gridBackgroundColor
+            )
             
             // Events list
             if events.isEmpty {
@@ -78,7 +82,11 @@ struct EventListView: View {
             .padding()
         }
         .frame(width: 300, height: 400)
-        .background(themeManager.currentTheme.backgroundColor)
+        .background(
+            themeManager.currentTheme.blurEnabled ?
+            themeManager.currentTheme.backgroundColor.opacity(0.9) :
+            themeManager.currentTheme.backgroundColor
+        )
         .cornerRadius(10)
         .shadow(radius: 10)
     }
@@ -188,7 +196,11 @@ struct EventItemView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(themeManager.currentTheme.gridBackgroundColor)
+        .background(
+            themeManager.currentTheme.blurEnabled ?
+            themeManager.currentTheme.backgroundColor.opacity(0.2) :
+            themeManager.currentTheme.gridBackgroundColor
+        )
         .cornerRadius(6)
         .onTapGesture {
             openCalendarApp()

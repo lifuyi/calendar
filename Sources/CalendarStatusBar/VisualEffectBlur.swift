@@ -15,12 +15,9 @@ struct VisualEffectBlur: NSViewRepresentable {
         view.alphaValue = CGFloat(opacity)
         view.state = .active
         
-        // Add additional visual effects for more pronounced blur
-        view.maskImage = NSImage(size: CGSize(width: 1, height: 1), flipped: false) { rect in
-            NSColor.black.setFill()
-            rect.fill()
-            return true
-        }
+        // Simple, clean blur effect
+        view.wantsLayer = true
+        view.layer?.cornerRadius = 10
         
         return view
     }

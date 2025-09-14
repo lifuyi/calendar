@@ -55,8 +55,8 @@ struct Theme {
         todayTextColor: Color.blue,
         workdayColor: Color.orange,
         solarTermColor: Color.blue,
-        blurEnabled: false,
-        blurOpacity: 0.8
+        blurEnabled: true,
+        blurOpacity: 0.85
     )
     
     static let dark = Theme(
@@ -72,8 +72,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color.blue,
-        blurEnabled: false,
-        blurOpacity: 0.8
+        blurEnabled: true,
+        blurOpacity: 0.85
     )
     
     static let aurora = Theme(
@@ -89,8 +89,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color(red: 0.4, green: 0.9, blue: 0.8),
-        blurEnabled: false,
-        blurOpacity: 0.8
+        blurEnabled: true,
+        blurOpacity: 0.9
     )
     
     static let sunset = Theme(
@@ -106,8 +106,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color(red: 1.0, green: 0.7, blue: 0.5),
-        blurEnabled: false,
-        blurOpacity: 0.8
+        blurEnabled: true,
+        blurOpacity: 0.9
     )
     
     static let ocean = Theme(
@@ -123,8 +123,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color(red: 0.5, green: 0.9, blue: 1.0),
-        blurEnabled: false,
-        blurOpacity: 0.8
+        blurEnabled: true,
+        blurOpacity: 0.9
     )
 }
 

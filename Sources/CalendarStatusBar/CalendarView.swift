@@ -96,15 +96,6 @@ struct CalendarView: View {
                         .padding(.horizontal)
                     }
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .background(themeManager.currentTheme.backgroundColor)
-                    .background(
-                        themeManager.currentTheme.blurEnabled ?
-                        ZStack {
-                            VisualEffectBlur(material: .fullScreenUI, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
-                            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.7)
-                        } :
-                        nil
-                    )
                     
                     // 右侧信息面板
                     VStack(alignment: .leading, spacing: 10) {
@@ -131,14 +122,10 @@ struct CalendarView: View {
                     }
                     .frame(maxWidth: 150, maxHeight: .infinity, alignment: .top)
                     .padding()
-                    .background(themeManager.currentTheme.gridBackgroundColor)
                     .background(
                         themeManager.currentTheme.blurEnabled ?
-                        ZStack {
-                            VisualEffectBlur(material: .fullScreenUI, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
-                            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.7)
-                        } :
-                        nil
+                        themeManager.currentTheme.backgroundColor.opacity(0.3) :
+                        themeManager.currentTheme.gridBackgroundColor
                     )
                 }
                 
@@ -154,14 +141,10 @@ struct CalendarView: View {
                 }
             }
             .padding()
-            .background(themeManager.currentTheme.backgroundColor)
             .background(
                 themeManager.currentTheme.blurEnabled ?
-                ZStack {
-                    VisualEffectBlur(material: .fullScreenUI, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
-                    VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.7)
-                } :
-                nil
+                AnyView(VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+                AnyView(themeManager.currentTheme.backgroundColor)
             )
             
             // 悬浮式事件抽屉
@@ -184,7 +167,11 @@ struct CalendarView: View {
                 VStack {
                     EventCreationView(isPresented: $showEventCreationPopup, selectedDate: selectedDateForEvent)
                         .frame(width: 300)
-                        .background(themeManager.currentTheme.backgroundColor)
+                        .background(
+                            themeManager.currentTheme.blurEnabled ?
+                            themeManager.currentTheme.backgroundColor.opacity(0.9) :
+                            themeManager.currentTheme.backgroundColor
+                        )
                         .cornerRadius(10)
                         .shadow(radius: 10)
                 }
