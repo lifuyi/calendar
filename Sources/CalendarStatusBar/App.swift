@@ -140,7 +140,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.async {
                 let currentDate = Date()
                 if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
-                    calendarView.viewModel.currentDate = currentDate
+                    calendarView.viewModel.updateCurrentDate()
                 }
                 // 同时更新 EventManager 的今日事件
                 EventManager.shared.loadTodayEvents(for: currentDate)

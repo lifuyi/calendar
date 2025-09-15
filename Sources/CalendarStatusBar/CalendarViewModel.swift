@@ -284,6 +284,13 @@ class CalendarViewModel: ObservableObject {
     // 用于存储取消令牌
     private var cancellables = Set<AnyCancellable>()
     
+    // 更新当前日期
+    func updateCurrentDate() {
+        currentDate = Date()
+        // 强制触发视图更新
+        objectWillChange.send()
+    }
+    
     // 回到今天
     func goToToday() {
         selectedYear = calendar.component(.year, from: currentDate)

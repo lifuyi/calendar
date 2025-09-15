@@ -3,6 +3,7 @@ import SwiftUI
 struct CalendarGridView: View {
     @ObservedObject var viewModel: CalendarViewModel
     @StateObject private var themeManager = ThemeManager.shared
+    @State private var refreshTrigger = UUID()
     
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 0) {
@@ -19,6 +20,11 @@ struct CalendarGridView: View {
                 )
                 .environmentObject(themeManager)
             }
+        }
+        .id(refreshTrigger)
+        .onReceive(viewModel.$currentDate) { _ in
+            // 当 currentDate 变化时，强制刷新视图
+            refreshTrigger = UUID()
         }
     }
 }
