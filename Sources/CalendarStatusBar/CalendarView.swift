@@ -111,7 +111,7 @@ struct CalendarView: View {
                                 NSApp.sendAction(Selector(("showSettingsMenu:")), to: nil, from: nil)
                             }) {
                                 Image(systemName: "gear")
-                                    .font(.custom(customFont, size: 12))
+                                    .font(.system(size: 12))
                                     .foregroundColor(themeManager.currentTheme.textColor)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -134,7 +134,7 @@ struct CalendarView: View {
                     Button("请求日历权限") {
                         eventManager.refreshCalendarAccess()
                     }
-                    .font(.caption)
+                    .font(.custom(customFont, size: 12))
                     .padding(.horizontal)
                     .padding(.bottom, 8)
                     .foregroundColor(themeManager.currentTheme.textColor)

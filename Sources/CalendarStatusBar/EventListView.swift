@@ -7,6 +7,7 @@ struct EventListView: View {
     let events: [EKEvent]
     @Binding var isPresented: Bool
     @StateObject private var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"
     
     private var formattedDate: String {
         let formatter = DateFormatter()
@@ -27,7 +28,7 @@ struct EventListView: View {
             // Header
             HStack {
                 Text(formattedDate)
-                    .font(.headline)
+                    .font(.custom(customFont, size: 16))
                     .foregroundColor(themeManager.currentTheme.textColor)
                 Spacer()
                 Button(action: {
@@ -49,7 +50,7 @@ struct EventListView: View {
             if events.isEmpty {
                 VStack {
                     Image(systemName: "calendar.badge.exclamationmark")
-                        .font(.largeTitle)
+                        .font(.custom(customFont, size: 24))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                         .padding(.bottom, 8)
                     Text("这一天没有事件")
@@ -95,6 +96,7 @@ struct EventListView: View {
 struct EventItemView: View {
     let event: EKEvent
     @StateObject private var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"
     
     private func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -148,10 +150,10 @@ struct EventItemView: View {
                 // Time range
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(formatTime(event.startDate))
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     Text(formatTime(event.endDate))
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .frame(width: 50)
@@ -159,20 +161,20 @@ struct EventItemView: View {
                 // Event details
                 VStack(alignment: .leading, spacing: 2) {
                     Text(event.title)
-                        .font(.body)
+                        .font(.custom(customFont, size: 14))
                         .foregroundColor(themeManager.currentTheme.textColor)
                         .lineLimit(2)
                     
                     if let location = event.location, !location.isEmpty {
                         Text(location)
-                            .font(.caption)
+                            .font(.custom(customFont, size: 12))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             .lineLimit(1)
                     }
                     
                     if let notes = event.notes, !notes.isEmpty {
                         Text(notes)
-                            .font(.caption)
+                            .font(.custom(customFont, size: 12))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             .lineLimit(2)
                     }
@@ -188,7 +190,7 @@ struct EventItemView: View {
                         .fill(Color(calendar.cgColor ?? NSColor.systemBlue.cgColor))
                         .frame(width: 8, height: 8)
                     Text(calendar.title)
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     Spacer()
                 }

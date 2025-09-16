@@ -5,6 +5,7 @@ import AppKit
 struct EventRowView: View {
     let event: EKEvent
     @EnvironmentObject private var themeManager: ThemeManager
+    private let customFont = "dingliesongtypeface"
     
     var body: some View {
         HStack {
@@ -15,7 +16,7 @@ struct EventRowView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(event.title)
-                    .font(.caption)
+                    .font(.custom(customFont, size: 12))
                     .fontWeight(.medium)
                     .lineLimit(1)
                     .foregroundColor(themeManager.currentTheme.textColor)
@@ -29,13 +30,13 @@ struct EventRowView: View {
                             Text(formatTime(endDate))
                         }
                     }
-                    .font(.caption2)
+                    .font(.custom(customFont, size: 10))
                     .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 
                 // Calendar name
                 Text(event.calendar.title)
-                    .font(.caption2)
+                    .font(.custom(customFont, size: 10))
                     .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     .lineLimit(1)
             }
@@ -67,13 +68,14 @@ struct EventsDrawerView: View {
     @ObservedObject var eventManager: EventManager
     @Binding var isExpanded: Bool
     @StateObject private var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"
     
     var body: some View {
         VStack(spacing: 0) {
             // Drawer header with toggle button
             HStack {
                 Text("今日事件")
-                    .font(.headline)
+                    .font(.custom(customFont, size: 16))
                     .fontWeight(.medium)
                     .foregroundColor(themeManager.currentTheme.textColor)
                 
@@ -85,7 +87,7 @@ struct EventsDrawerView: View {
                     }
                 }) {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.up")
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.textColor)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -109,12 +111,12 @@ struct EventsDrawerView: View {
                 if let errorMessage = eventManager.authorizationError {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("权限错误")
-                            .font(.caption)
+                            .font(.custom(customFont, size: 12))
                             .fontWeight(.bold)
                             .foregroundColor(themeManager.currentTheme.holidayColor)
                         
                         Text(errorMessage)
-                            .font(.caption)
+                            .font(.custom(customFont, size: 12))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             .fixedSize(horizontal: false, vertical: true)
                         
@@ -122,14 +124,14 @@ struct EventsDrawerView: View {
                             Button("重新请求权限") {
                                 eventManager.refreshCalendarAccess()
                             }
-                            .font(.caption)
+                            .font(.custom(customFont, size: 12))
                             .frame(maxWidth: .infinity)
                             .foregroundColor(themeManager.currentTheme.textColor)
                             
                             Button("打开系统设置") {
                                 eventManager.openCalendarPrivacySettings()
                             }
-                            .font(.caption)
+                            .font(.custom(customFont, size: 12))
                             .frame(maxWidth: .infinity)
                             .foregroundColor(themeManager.currentTheme.textColor)
                         }
@@ -138,7 +140,7 @@ struct EventsDrawerView: View {
                     .frame(maxWidth: .infinity)
                 } else if eventManager.todayEvents.isEmpty {
                     Text("今天没有事件")
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                         .padding()
                         .frame(maxWidth: .infinity)

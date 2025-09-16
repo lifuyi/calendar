@@ -50,7 +50,7 @@ struct EventCreationView: View {
             // Header with date
             HStack {
                 Text(formattedDate)
-                    .font(.headline)
+                    .font(.custom(customFont, size: 16))
                     .foregroundColor(themeManager.currentTheme.textColor)
                 Spacer()
             }
@@ -59,7 +59,7 @@ struct EventCreationView: View {
             // Title input
             VStack(alignment: .leading, spacing: 5) {
                 Text("标题")
-                    .font(.caption)
+                    .font(.custom(customFont, size: 12))
                     .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 TextField("输入标题", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -71,7 +71,7 @@ struct EventCreationView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("任务类型")
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     Picker("任务类型", selection: $eventType) {
                         ForEach(eventTypes, id: \.self) { type in
@@ -90,7 +90,7 @@ struct EventCreationView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("开始时间")
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     DatePicker("", selection: $startTime, displayedComponents: [.date, .hourAndMinute])
                         .datePickerStyle(CompactDatePickerStyle())
@@ -101,7 +101,7 @@ struct EventCreationView: View {
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("需要时间")
-                        .font(.caption)
+                        .font(.custom(customFont, size: 12))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     Picker("需要时间", selection: $duration) {
                         ForEach(durationOptions, id: \.0) { option in
@@ -117,7 +117,7 @@ struct EventCreationView: View {
             // Description
             VStack(alignment: .leading, spacing: 5) {
                 Text("描述")
-                    .font(.caption)
+                    .font(.custom(customFont, size: 12))
                     .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 TextEditor(text: $description)
                     .frame(height: 80)
@@ -125,18 +125,18 @@ struct EventCreationView: View {
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                     )
-                    .font(.system(size: 14))
+                    .font(.custom(customFont, size: 14))
             }
             .padding(.horizontal)
             
             // Tags
             VStack(alignment: .leading, spacing: 5) {
                 Text("标签")
-                    .font(.caption)
+                    .font(.custom(customFont, size: 12))
                     .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 TextField("标签,多个用逗号隔开", text: $tags)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .font(.system(size: 14))
+                    .font(.custom(customFont, size: 14))
             }
             .padding(.horizontal)
             

@@ -141,7 +141,7 @@ struct CalendarDayView: View {
                 // 阳历日期
                 HStack(alignment: .center) {
                     Text("\(Calendar.current.component(.day, from: day.date))")
-                        .font(.custom(customFont, size: 13))
+                        .font(.system(size: 13))
                         .foregroundColor(
                             isToday ? todayTextColor :
                                 isHoliday ? holidayColor :
