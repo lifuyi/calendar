@@ -13,11 +13,11 @@ struct CalendarView: View {
     @State private var eventsForSelectedDate: [EKEvent] = []
     
     // 格式化日期
-    private var formattedDate: String {
+    private func formattedDate(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月dd日 EEEE"
         formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: viewModel.selectedDate)
+        return formatter.string(from: date)
     }
     
     // 添加自定义字体名称
@@ -84,11 +84,11 @@ struct CalendarView: View {
                         
                         // 底部信息
                         HStack {
-                            Text("第\(viewModel.dayOfYear)天·第\(viewModel.weekOfYear)周 \(viewModel.zodiacSign)\(getZodiacEmoji(for: viewModel.currentDate))")
+                            Text("第\(viewModel.dayOfYear(for: viewModel.currentDate))天·第\(viewModel.weekOfYear(for: viewModel.currentDate))周 \(viewModel.zodiacSign(for: viewModel.currentDate))\(getZodiacEmoji(for: viewModel.currentDate))")
                                 .font(.custom(customFont, size: 11))
                                 .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             Spacer()
-                            Text("\(viewModel.zodiacMonth)月 \(viewModel.zodiacYear)\(getAnimalEmoji(for: viewModel.currentDate))")
+                            Text("\(viewModel.zodiacMonth(for: viewModel.currentDate))月 \(viewModel.zodiacYear(for: viewModel.currentDate))\(getAnimalEmoji(for: viewModel.currentDate))")
                                 .font(.custom(customFont, size: 11))
                                 .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                         }
@@ -101,7 +101,7 @@ struct CalendarView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         // 日期信息
                         HStack {
-                            Text("\(formattedDate)")
+                            Text("\(formattedDate(for: viewModel.currentDate))")
                                 .font(.custom(customFont, size: 12))
                                 .foregroundColor(themeManager.currentTheme.textColor)
                             Spacer()

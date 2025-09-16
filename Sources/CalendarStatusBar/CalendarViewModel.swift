@@ -299,29 +299,29 @@ class CalendarViewModel: ObservableObject {
     }
     
     // 获取当前年份的天干地支和生肖
-    var zodiacYear: String {
-        return ChineseCalendarHelper.getChineseYearText(for: currentDate)
+    func zodiacYear(for date: Date) -> String {
+        return ChineseCalendarHelper.getChineseYearText(for: date)
     }
     
     // 获取当前月份的农历月份
-    var zodiacMonth: String {
-        return ChineseCalendarHelper.getChineseMonth(for: currentDate)
+    func zodiacMonth(for date: Date) -> String {
+        return ChineseCalendarHelper.getChineseMonth(for: date)
     }
     
     // 获取当前是一年中的第几天和第几周
-    var dayOfYear: Int {
-        return ChineseCalendarHelper.dayOfYear(for: currentDate)
+    func dayOfYear(for date: Date) -> Int {
+        return ChineseCalendarHelper.dayOfYear(for: date)
     }
     
     // 获取当前是一年中的第几周
-    var weekOfYear: Int {
-        return ChineseCalendarHelper.weekOfYear(for: currentDate)
+    func weekOfYear(for date: Date) -> Int {
+        return ChineseCalendarHelper.weekOfYear(for: date)
     }
     
     // 获取当前月份对应的星座
-    var zodiacSign: String {
-        let month = Calendar.current.component(.month, from: currentDate)
-        let day = Calendar.current.component(.day, from: currentDate)
+    func zodiacSign(for date: Date) -> String {
+        let month = Calendar.current.component(.month, from: date)
+        let day = Calendar.current.component(.day, from: date)
         
         switch (month, day) {
         case (1, 20...31), (2, 1...18): return "水瓶座"
