@@ -111,7 +111,7 @@ struct CalendarView: View {
                                 NSApp.sendAction(Selector(("showSettingsMenu:")), to: nil, from: nil)
                             }) {
                                 Image(systemName: "gear")
-                                    .font(.system(size: 12))
+                                    .font(.custom(customFont, size: 12))
                                     .foregroundColor(themeManager.currentTheme.textColor)
                             }
                             .buttonStyle(PlainButtonStyle())

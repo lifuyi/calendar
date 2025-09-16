@@ -3,6 +3,7 @@ import SwiftUI
 struct WeatherPanelView: View {
     @ObservedObject var viewModel: CalendarViewModel
     @StateObject private var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -12,10 +13,10 @@ struct WeatherPanelView: View {
                 if !viewModel.locationService.city.isEmpty {
                     HStack {
                         Image(systemName: "location.fill")
-                            .font(.system(size: 11))
+                            .font(.custom(customFont, size: 11))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                         Text(viewModel.locationService.city)
-                            .font(.system(size: 11))
+                            .font(.custom(customFont, size: 11))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     }
                 }
@@ -26,7 +27,7 @@ struct WeatherPanelView: View {
                         ProgressView()
                             .scaleEffect(0.7)
                         Text("正在获取天气数据...")
-                            .font(.system(size: 11))
+                            .font(.custom(customFont, size: 11))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                     }
                 }
@@ -34,7 +35,7 @@ struct WeatherPanelView: View {
                 // 错误信息
                 if let error = viewModel.weatherError {
                     Text("错误: \(error)")
-                        .font(.system(size: 10))
+                        .font(.custom(customFont, size: 10))
                         .foregroundColor(themeManager.currentTheme.holidayColor)
                         .lineLimit(3)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -69,11 +70,11 @@ struct WeatherInfoRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 11))
+                .font(.custom("dingliesongtypeface", size: 11))
                 .foregroundColor(theme.secondaryTextColor)
                 .frame(width: 60, alignment: .leading)
             Text(value)
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("dingliesongtypeface", size: 11))
                 .foregroundColor(theme.textColor)
         }
     }

@@ -64,7 +64,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var quitShortcutMonitor: Any?
     private var ipLocationService: IPLocationService?
     
+    // 注册自定义字体
+    private func registerCustomFont() {
+        guard let fontURL = Bundle.main.url(forResource: Constants.fontName, withExtension: Constants.fontExtension) else {
+            print("Font file not found: \(Constants.fontName).\(Constants.fontExtension)")
+            return
+        }
+        
+        var error: Unmanaged<CFError>?
+        let success = CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
+        
+        if !success {
+            if let error = error?.takeRetainedValue() {
+                print("Failed to register font: \(error)")
+            } else {
+                print("Failed to register font: Unknown error")
+            }
+        } else {
+            print("Successfully registered custom font: \(Constants.fontName)")
+        }
+    }
+    
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // 首先注册自定义字体
+        registerCustomFont()
+        
         setupUI()
         startStatusBarTimer()
         setupKeyboardShortcuts()
@@ -106,9 +130,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            // No icon on status bar, just text with larger font
+            // No icon on status bar, just text with custom font
             let dateString = dateFormatter.string(from: Date())
-            let font = NSFont.systemFont(ofSize: Constants.statusBarFontSize)
+            let font = NSFont(name: "dingliesongtypeface", size: Constants.statusBarFontSize) ?? NSFont.systemFont(ofSize: Constants.statusBarFontSize)
             let attributes: [NSAttributedString.Key: Any] = [.font: font]
             let attributedString = NSAttributedString(string: dateString, attributes: attributes)
             button.attributedTitle = attributedString
@@ -150,7 +174,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func updateStatusBarButton(_ button: NSStatusBarButton) {
         let dateString = dateFormatter.string(from: Date())
-        let font = NSFont.systemFont(ofSize: Constants.statusBarFontSize)
+        let font = NSFont(name: "dingliesongtypeface", size: Constants.statusBarFontSize) ?? NSFont.systemFont(ofSize: Constants.statusBarFontSize)
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
         let attributedString = NSAttributedString(string: dateString, attributes: attributes)
         button.attributedTitle = attributedString

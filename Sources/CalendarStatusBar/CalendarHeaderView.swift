@@ -23,7 +23,7 @@ struct CalendarHeaderView: View {
                 // 月份切换按钮
                 Button(action: viewModel.previousMonth) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.custom(customFont, size: 14))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .buttonStyle(.plain)
@@ -31,13 +31,12 @@ struct CalendarHeaderView: View {
                 .contentShape(Rectangle())
 
                 Text("\(viewModel.selectedMonth)月")
-                    .font(.system(size: 20, weight: .bold))
-                    .font(.custom(customFont, size: 11))
+                    .font(.custom(customFont, size: 20))
                     .foregroundColor(themeManager.currentTheme.textColor)
 
                 Button(action: viewModel.nextMonth) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.custom(customFont, size: 14))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .buttonStyle(.plain)

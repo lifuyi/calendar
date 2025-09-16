@@ -6,6 +6,7 @@ struct EventCreationView: View {
     let selectedDate: Date
     @StateObject private var eventManager = EventManager.shared
     @StateObject private var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
     
     // Event properties
     @State private var title = ""
@@ -62,7 +63,7 @@ struct EventCreationView: View {
                     .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 TextField("输入标题", text: $title)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .font(.system(size: 14))
+                    .font(.custom(customFont, size: 14))
             }
             .padding(.horizontal)
             
