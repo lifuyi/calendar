@@ -31,7 +31,7 @@ struct CalendarHeaderView: View {
                 .contentShape(Rectangle())
 
                 Text("\(viewModel.selectedMonth)月")
-                    .font(.custom(customFont, size: 20))
+                    .font(.system(size: 20))
                     .foregroundColor(themeManager.currentTheme.textColor)
 
                 Button(action: viewModel.nextMonth) {
