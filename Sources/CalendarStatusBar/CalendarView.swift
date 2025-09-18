@@ -143,7 +143,7 @@ struct CalendarView: View {
             .padding()
             .background(
                 themeManager.currentTheme.blurEnabled ?
-                AnyView(VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+                AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
                 AnyView(themeManager.currentTheme.backgroundColor)
             )
             
