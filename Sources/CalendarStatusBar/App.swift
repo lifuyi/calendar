@@ -163,8 +163,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // 更新 CalendarViewModel 中的 currentDate 和 EventManager
             DispatchQueue.main.async {
                 let currentDate = Date()
-                if let calendarView = (self?.popover?.contentViewController as? NSHostingController<CalendarView>)?.rootView {
-                    calendarView.viewModel.updateCurrentDate()
+                // 直接更新 CalendarViewModel 的共享实例
+                if let popoverContent = self?.popover?.contentViewController as? NSHostingController<CalendarView> {
+                    popoverContent.rootView.viewModel.updateCurrentDate()
                 }
                 // 同时更新 EventManager 的今日事件
                 EventManager.shared.loadTodayEvents(for: currentDate)

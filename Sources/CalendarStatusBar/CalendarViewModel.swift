@@ -287,6 +287,13 @@ class CalendarViewModel: ObservableObject {
     // 更新当前日期
     func updateCurrentDate() {
         currentDate = Date()
+        // 同步更新选中日期为当前日期
+        selectedDate = currentDate
+        // 更新年月选择器
+        selectedYear = calendar.component(.year, from: currentDate)
+        selectedMonth = calendar.component(.month, from: currentDate)
+        // 更新日历网格
+        updateDays()
         // 强制触发视图更新
         objectWillChange.send()
     }
