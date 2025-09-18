@@ -3,7 +3,9 @@ import Foundation
 import Combine
 
 @MainActor
-class CalendarViewModel: ObservableObject {    
+class CalendarViewModel: ObservableObject {
+    // 共享实例
+    static let shared = CalendarViewModel()    
     // 天气服务
     var weatherService: WeatherService
     

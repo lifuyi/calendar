@@ -3,7 +3,7 @@ import AppKit
 import EventKit
 
 struct CalendarView: View {
-    @ObservedObject var viewModel = CalendarViewModel()
+    @ObservedObject var viewModel = CalendarViewModel.shared
     @StateObject private var eventManager = EventManager.shared
     @StateObject private var themeManager = ThemeManager.shared
     @State private var isEventsDrawerExpanded = false
