@@ -123,8 +123,6 @@ struct CalendarView: View {
                     .frame(maxWidth: 150, maxHeight: .infinity, alignment: .top)
                     .padding()
                     .background(
-                        themeManager.currentTheme.blurEnabled ?
-                        themeManager.currentTheme.backgroundColor.opacity(0.3) :
                         themeManager.currentTheme.gridBackgroundColor
                     )
                 }
@@ -142,9 +140,7 @@ struct CalendarView: View {
             }
             .padding()
             .background(
-                themeManager.currentTheme.blurEnabled ?
-                AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
-                AnyView(themeManager.currentTheme.backgroundColor)
+                themeManager.currentTheme.backgroundColor
             )
             
             // 悬浮式事件抽屉

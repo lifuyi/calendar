@@ -130,9 +130,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            // No icon on status bar, just text with custom font
+            // No icon on status bar, just text with system font
             let dateString = dateFormatter.string(from: Date())
-            let font = NSFont(name: "dingliesongtypeface", size: Constants.statusBarFontSize) ?? NSFont.systemFont(ofSize: Constants.statusBarFontSize)
+            let font = NSFont.systemFont(ofSize: Constants.statusBarFontSize)
             let attributes: [NSAttributedString.Key: Any] = [.font: font]
             let attributedString = NSAttributedString(string: dateString, attributes: attributes)
             button.attributedTitle = attributedString
@@ -173,7 +173,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func updateStatusBarButton(_ button: NSStatusBarButton) {
         let dateString = dateFormatter.string(from: Date())
-        let font = NSFont(name: "dingliesongtypeface", size: Constants.statusBarFontSize) ?? NSFont.systemFont(ofSize: Constants.statusBarFontSize)
+        let font = NSFont.systemFont(ofSize: Constants.statusBarFontSize)
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
         let attributedString = NSAttributedString(string: dateString, attributes: attributes)
         button.attributedTitle = attributedString

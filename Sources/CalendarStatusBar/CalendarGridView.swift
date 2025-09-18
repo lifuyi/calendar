@@ -3,7 +3,6 @@ import SwiftUI
 struct CalendarGridView: View {
     @ObservedObject var viewModel: CalendarViewModel
     @StateObject private var themeManager = ThemeManager.shared
-    private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
     @State private var refreshTrigger = UUID()
     
     var body: some View {
@@ -36,7 +35,6 @@ struct CalendarDayView: View {
     let isToday: Bool
     let isCurrentMonth: Bool
     @EnvironmentObject private var themeManager: ThemeManager
-    private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
     
     // 计算属性，用于判断是否为节假日
     private var isHoliday: Bool {
@@ -115,7 +113,7 @@ struct CalendarDayView: View {
                 // 显示 休 或 班 标识
                 if isHoliday {
                     Text("休")
-                        .font(.custom(customFont, size: 8))
+                        .font(.system(size: 8))
                         .foregroundColor(.white)
                         .padding(.horizontal, 2)
                         .padding(.vertical, 1)
@@ -125,7 +123,7 @@ struct CalendarDayView: View {
                         )
                 } else if isWorkday {
                     Text("班")
-                        .font(.custom(customFont, size: 8))
+                        .font(.system(size: 8))
                         .foregroundColor(.white)
                         .padding(.horizontal, 2)
                         .padding(.vertical, 1)
@@ -141,7 +139,7 @@ struct CalendarDayView: View {
                 // 阳历日期
                 HStack(alignment: .center) {
                     Text("\(Calendar.current.component(.day, from: day.date))")
-                        .font(.custom(customFont, size: 13))
+                        .font(.system(size: 13))
                         .foregroundColor(
                             isToday ? todayTextColor :
                                 isHoliday ? holidayColor :
@@ -159,13 +157,13 @@ struct CalendarDayView: View {
                 if let name = holidayName, isFirstDayOfHoliday(day.date) {
                     // 公共假日第一天显示节日名称
                     Text(name)
-                        .font(.custom(customFont, size: 9))
+                        .font(.system(size: 9))
                         .foregroundColor(holidayColor)
                 } else if ChineseCalendarHelper.isSolarTerm(day.date),
                           let termName = ChineseCalendarHelper.solarTermName(for: day.date) {
                     // 有节气时只显示节气
                     Text(termName)
-                        .font(.custom(customFont, size: 9))
+                        .font(.system(size: 9))
                         .foregroundColor(solarTermColor)
                 } else {
                     // 没有节日和节气时显示农历日期
@@ -174,7 +172,7 @@ struct CalendarDayView: View {
                     // 2. 如果是初一，显示月份
                     // 3. 其他情况显示农历日期
                     Text(getLunarDisplayText(for: day.date))
-                        .font(.custom(customFont, size: 9))
+                        .font(.system(size: 9))
                         .foregroundColor(isCurrentMonth ? themeManager.currentTheme.textColor : inactiveTextColor)
                 }
                 

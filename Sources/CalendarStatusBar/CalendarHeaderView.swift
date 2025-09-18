@@ -18,7 +18,7 @@ struct CalendarHeaderView: View {
                 .frame(width: 85, height: 20)  // 限制高度
                 .clipped()  // 裁剪超出部分
                 .labelsHidden()
-                .foregroundColor(themeManager.currentTheme.textColor)
+                .foregroundColor(themeManager.currentTheme.accentColor.opacity(0.8))
 
                 // 月份切换按钮
                 Button(action: viewModel.previousMonth) {
