@@ -156,7 +156,10 @@ struct EventCreationView: View {
         .padding(.vertical, 20)
         .background(
             themeManager.currentTheme.blurEnabled ?
-            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+            AnyView(ZStack {
+                themeManager.currentTheme.backgroundColor
+                VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+            }) :
             AnyView(themeManager.currentTheme.backgroundColor)
         )
         .cornerRadius(10)

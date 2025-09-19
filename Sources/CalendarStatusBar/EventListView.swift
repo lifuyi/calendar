@@ -42,7 +42,10 @@ struct EventListView: View {
             .padding()
             .background(
                 themeManager.currentTheme.blurEnabled ?
-                AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+                AnyView(ZStack {
+                    themeManager.currentTheme.gridBackgroundColor
+                    VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+                }) :
                 AnyView(themeManager.currentTheme.gridBackgroundColor)
             )
             
@@ -85,7 +88,10 @@ struct EventListView: View {
         .frame(width: 300, height: 400)
         .background(
             themeManager.currentTheme.blurEnabled ?
-            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+            AnyView(ZStack {
+                themeManager.currentTheme.backgroundColor
+                VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+            }) :
             AnyView(themeManager.currentTheme.backgroundColor)
         )
         .cornerRadius(10)
@@ -200,7 +206,10 @@ struct EventItemView: View {
         .padding(.horizontal, 12)
         .background(
             themeManager.currentTheme.blurEnabled ?
-            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity * 0.5)) :
+            AnyView(ZStack {
+                themeManager.currentTheme.gridBackgroundColor
+                VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity * 0.5)
+            }) :
             AnyView(themeManager.currentTheme.gridBackgroundColor)
         )
         .cornerRadius(6)

@@ -103,12 +103,12 @@ enum BlurMaterial: String, CaseIterable {
     #if canImport(AppKit)
     var nsMaterial: NSVisualEffectView.Material {
         switch self {
-        case .light: return .light
-        case .dark: return .dark
-        case .ultraThin: return .appearanceBased
-        case .thin: return .appearanceBased
-        case .regular: return .appearanceBased
-        case .thick: return .appearanceBased
+        case .light: return .underWindowBackground
+        case .dark: return .fullScreenUI
+        case .ultraThin: return .underWindowBackground
+        case .thin: return .windowBackground
+        case .regular: return .menu
+        case .thick: return .popover
         case .hudWindow: return .hudWindow
         }
     }
