@@ -23,6 +23,7 @@ class CalendarViewModel: ObservableObject {
     @Published var weatherError: String? = nil
     @Published var selectedDate = Date()
     @Published var currentDate = Date()
+    private var lastKnownDate = Date()
     @Published var selectedYear: Int
     @Published var selectedMonth: Int
     @Published var days: [DayInfo] = []
@@ -57,6 +58,9 @@ class CalendarViewModel: ObservableObject {
         
         // 设置天气数据更新回调
         setupWeatherBindings()
+        
+        // 设置日期变化监听
+        setupDateChangeNotification()
         
         // 不再在这里调用 fetchLocation，因为 AppDelegate 已经调用了
     }
@@ -288,12 +292,66 @@ class CalendarViewModel: ObservableObject {
     // 用于存储取消令牌
     private var cancellables = Set<AnyCancellable>()
     
+    // 设置日期变化通知监听
+    private func setupDateChangeNotification() {
+        // 监听系统日期变化通知
+        NotificationCenter.default.addObserver(
+            forName: .NSCalendarDayChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            print("系统检测到日期变化")
+            Task { @MainActor in
+                self?.handleDateChange()
+            }
+        }
+        
+        // 监听时区变化通知
+        NotificationCenter.default.addObserver(
+            forName: .NSSystemTimeZoneDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            print("系统检测到时区变化")
+            Task { @MainActor in
+                self?.handleDateChange()
+            }
+        }
+    }
+    
+    // 处理日期变化
+    private func handleDateChange() {
+        let newDate = Date()
+        currentDate = newDate
+        lastKnownDate = newDate
+        
+        print("处理日期变化，强制更新今天高亮")
+        // 强制触发视图更新以确保"今天"的高亮同步
+        objectWillChange.send()
+    }
+    
     // 更新当前日期（仅更新实际的当前时间，不影响用户选择的显示日期）
     func updateCurrentDate() {
-        currentDate = Date()
-        // 不再自动同步选中日期，让用户可以停留在选择的日期
-        // 强制触发视图更新（主要用于更新"今天"的高亮显示）
-        objectWillChange.send()
+        let newDate = Date()
+        let calendar = Calendar.current
+        
+        // 检查日期是否真的发生了变化（跨日）
+        let lastDateComponents = calendar.dateComponents([.year, .month, .day], from: lastKnownDate)
+        let newDateComponents = calendar.dateComponents([.year, .month, .day], from: newDate)
+        
+        let dateChanged = lastDateComponents.year != newDateComponents.year ||
+                         lastDateComponents.month != newDateComponents.month ||
+                         lastDateComponents.day != newDateComponents.day
+        
+        currentDate = newDate
+        lastKnownDate = newDate
+        
+        // 如果日期发生了变化，强制刷新今天的高亮显示
+        if dateChanged {
+            print("日期发生变化，更新今天高亮显示")
+            // 强制触发视图更新以确保"今天"的高亮同步
+            objectWillChange.send()
+        }
     }
     
     // 回到今天
