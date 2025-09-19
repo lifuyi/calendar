@@ -15,6 +15,9 @@ struct CalendarHeaderView: View {
                         Text(String(year) + "年").tag(year)
                     }
                 }
+                .onChange(of: viewModel.selectedYear) { _ in
+                    viewModel.updateSelectedDate()
+                }
                 .frame(width: 85, height: 20)  // 限制高度
                 .clipped()  // 裁剪超出部分
                 .labelsHidden()

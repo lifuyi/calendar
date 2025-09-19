@@ -96,8 +96,8 @@ struct EventsDrawerView: View {
             .padding(.vertical, 8)
             .background(
                 themeManager.currentTheme.blurEnabled ?
-                themeManager.currentTheme.backgroundColor.opacity(0.3) :
-                themeManager.currentTheme.gridBackgroundColor
+                AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+                AnyView(themeManager.currentTheme.gridBackgroundColor)
             )
             .onTapGesture {
                 withAnimation {
@@ -165,8 +165,8 @@ struct EventsDrawerView: View {
         .animation(.easeInOut, value: isExpanded)
         .background(
             themeManager.currentTheme.blurEnabled ?
-            themeManager.currentTheme.backgroundColor.opacity(0.8) :
-            themeManager.currentTheme.backgroundColor
+            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+            AnyView(themeManager.currentTheme.backgroundColor)
         )
         .cornerRadius(8)
         .shadow(radius: 5)

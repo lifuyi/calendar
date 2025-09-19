@@ -26,6 +26,18 @@ struct CalendarGridView: View {
             // 当 currentDate 变化时，强制刷新视图
             refreshTrigger = UUID()
         }
+        .onReceive(viewModel.$selectedYear) { _ in
+            // 当 selectedYear 变化时，强制刷新视图
+            refreshTrigger = UUID()
+        }
+        .onReceive(viewModel.$selectedMonth) { _ in
+            // 当 selectedMonth 变化时，强制刷新视图
+            refreshTrigger = UUID()
+        }
+        .onReceive(viewModel.$days) { _ in
+            // 当 days 数组变化时，强制刷新视图
+            refreshTrigger = UUID()
+        }
     }
 }
 

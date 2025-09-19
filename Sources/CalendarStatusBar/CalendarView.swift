@@ -165,8 +165,8 @@ struct CalendarView: View {
                         .frame(width: 300)
                         .background(
                             themeManager.currentTheme.blurEnabled ?
-                            themeManager.currentTheme.backgroundColor.opacity(0.9) :
-                            themeManager.currentTheme.backgroundColor
+                            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+                            AnyView(themeManager.currentTheme.backgroundColor)
                         )
                         .cornerRadius(10)
                         .shadow(radius: 10)

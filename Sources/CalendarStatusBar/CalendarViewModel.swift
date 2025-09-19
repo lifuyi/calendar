@@ -67,11 +67,7 @@ class CalendarViewModel: ObservableObject {
     
     // 计算并更新当前显示的日期数组
     private func updateDays() {
-        // 如果年月没有变化，不需要重新计算
-        if lastCalculatedYear == selectedYear && lastCalculatedMonth == selectedMonth {
-            return
-        }
-        
+        // 移除了年月变化检查，确保每次都会重新计算
         lastCalculatedYear = selectedYear
         lastCalculatedMonth = selectedMonth
         
@@ -223,6 +219,8 @@ class CalendarViewModel: ObservableObject {
             selectedDate = date
         }
         updateDays()
+        // 强制触发视图更新
+        objectWillChange.send()
     }
     
     // 上个月
@@ -235,6 +233,8 @@ class CalendarViewModel: ObservableObject {
             selectedMonth -= 1
         }
         updateDays()
+        // 强制触发视图更新
+        objectWillChange.send()
     }
     
     func nextMonth() {
@@ -245,6 +245,8 @@ class CalendarViewModel: ObservableObject {
             selectedMonth += 1
         }
         updateDays()
+        // 强制触发视图更新
+        objectWillChange.send()
     }
     
     // 设置天气数据绑定
@@ -286,17 +288,11 @@ class CalendarViewModel: ObservableObject {
     // 用于存储取消令牌
     private var cancellables = Set<AnyCancellable>()
     
-    // 更新当前日期
+    // 更新当前日期（仅更新实际的当前时间，不影响用户选择的显示日期）
     func updateCurrentDate() {
         currentDate = Date()
-        // 同步更新选中日期为当前日期
-        selectedDate = currentDate
-        // 更新年月选择器
-        selectedYear = calendar.component(.year, from: currentDate)
-        selectedMonth = calendar.component(.month, from: currentDate)
-        // 更新日历网格
-        updateDays()
-        // 强制触发视图更新
+        // 不再自动同步选中日期，让用户可以停留在选择的日期
+        // 强制触发视图更新（主要用于更新"今天"的高亮显示）
         objectWillChange.send()
     }
     

@@ -154,7 +154,13 @@ struct EventCreationView: View {
             .opacity(title.isEmpty || !eventManager.isAuthorized ? 0.6 : 1.0)
         }
         .padding(.vertical, 20)
-        .background(themeManager.currentTheme.backgroundColor)
+        .background(
+            themeManager.currentTheme.blurEnabled ?
+            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+            AnyView(themeManager.currentTheme.backgroundColor)
+        )
+        .cornerRadius(10)
+        .shadow(radius: 10)
         .onAppear {
             // Set default start time to the selected date at 9:00 AM
             let calendar = Calendar.current
