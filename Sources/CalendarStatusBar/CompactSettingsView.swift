@@ -7,10 +7,10 @@ struct CompactSettingsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
+            // Header - More compact
             HStack {
                 Text("设置")
-                    .font(.custom(customFont, size: 20))
+                    .font(.custom(customFont, size: 18))  // Smaller font
                     .fontWeight(.bold)
                     .foregroundColor(themeManager.currentTheme.textColor)
                 
@@ -20,19 +20,20 @@ struct CompactSettingsView: View {
                     isPresented = false
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
+                        .font(.system(size: 18))  // Smaller close button
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            .padding()
+            .padding(.horizontal, 16)  // Reduced horizontal padding
+            .padding(.vertical, 12)    // Reduced vertical padding
             .background(themeManager.currentTheme.accentColor.opacity(0.1))
             
             ScrollView {
-                VStack(spacing: 20) {
-                    // Theme Selection
+                VStack(spacing: 16) {  // Reduced from 20 to 16 for more compact layout
+                    // Theme Selection - More compact
                     SettingsSection(title: "主题选择") {
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 8) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 6) {  // 4 columns, reduced spacing
                             ForEach(ThemeType.allCases, id: \.self) { themeType in
                                 ThemeSelectionButton(
                                     themeType: themeType,
@@ -206,7 +207,8 @@ struct CompactSettingsView: View {
                         }
                     }
                 }
-                .padding()
+                .padding(.horizontal, 12)  // Reduced from default padding
+                .padding(.vertical, 8)     // Reduced from default padding
             }
         }
         .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.95))
@@ -225,9 +227,9 @@ struct SettingsSection<Content: View>: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {  // Reduced from 12 to 8
             Text(title)
-                .font(.custom(customFont, size: 16))
+                .font(.custom(customFont, size: 14))  // Smaller font
                 .fontWeight(.semibold)
                 .foregroundColor(themeManager.currentTheme.textColor)
             

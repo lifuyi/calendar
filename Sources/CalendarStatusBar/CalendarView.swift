@@ -192,7 +192,7 @@ struct CalendarView: View {
                         Spacer()
                         CompactSettingsView(isPresented: $showSettingsPopover)
                             .environmentObject(themeManager)
-                            .frame(width: 400, height: 500)
+                            .frame(width: 380, height: 420)  // More compact fixed size  // More compact fixed size
                             .background(
                                 themeManager.currentTheme.blurEnabled ?
                                 AnyView(
