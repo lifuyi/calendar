@@ -80,6 +80,7 @@ struct EventCreationView: View {
                     }
                     .pickerStyle(MenuPickerStyle())
                     .frame(height: 30)
+                    .zIndex(1)  // Prevent overlay issues with modals
                 }
                 
                 Spacer()
@@ -110,6 +111,7 @@ struct EventCreationView: View {
                     }
                     .pickerStyle(MenuPickerStyle())
                     .frame(height: 30)
+                    .zIndex(1)  // Prevent overlay issues with modals
                 }
             }
             .padding(.horizontal)

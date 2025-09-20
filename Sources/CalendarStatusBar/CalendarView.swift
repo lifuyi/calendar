@@ -77,7 +77,7 @@ struct CalendarView: View {
                 HStack(alignment: .top, spacing: 10) {
                     VStack(spacing: 5) {
                         // 顶部控制栏和星期标题
-                        CalendarHeaderView(viewModel: viewModel)
+                        CalendarHeaderView(viewModel: viewModel, isSettingsOpen: showSettingsPopover)
                         
                         // 日历网格
                         CalendarGridView(viewModel: viewModel)
@@ -174,14 +174,18 @@ struct CalendarView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             
-            // Settings popover
+            // Settings popover - Enhanced modal presentation
             if showSettingsPopover {
-                Color.black.opacity(0.3)
+                // Background overlay with higher opacity and proper blocking
+                Color.black.opacity(0.5)
                     .edgesIgnoringSafeArea(.all)
+                    .zIndex(1000)  // Ensure overlay is on top
                     .onTapGesture {
                         showSettingsPopover = false
                     }
+                    .transition(.opacity)
                 
+                // Settings window with proper modal behavior
                 VStack {
                     Spacer()
                     HStack {
@@ -203,11 +207,18 @@ struct CalendarView: View {
                             )
                             .cornerRadius(16)
                             .shadow(radius: 20)
+                            .zIndex(1001)  // Ensure settings window is on top of overlay
+                            .transition(.scale.combined(with: .opacity))
                         Spacer()
                     }
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .zIndex(1001)  // Ensure the entire settings container is on top
+                .onAppear {
+                    // Force refresh to ensure proper rendering
+                    NSApp.windows.first?.makeKey()
+                }
             }
             
             // Event list popup

@@ -4,26 +4,50 @@ struct CalendarHeaderView: View {
     @ObservedObject var viewModel: CalendarViewModel
     @StateObject private var themeManager = ThemeManager.shared
     private let customFont = "dingliesongtypeface"  // 字体的PostScript名称
+    var isSettingsOpen: Bool = false
 
     var body: some View {
         VStack(spacing: 5) {
             // 顶部控制栏
             HStack(spacing: 6) {
-                // 年份选择
-                Picker("", selection: $viewModel.selectedYear) {
-                    ForEach(Array(viewModel.yearRange), id: \.self) { year in
-                        Text(String(year) + "年")
-                            .foregroundColor(themeManager.currentTheme.textColor)
-                            .tag(year)
+                // 年份选择 - Use custom implementation to prevent overlay issues
+                if isSettingsOpen {
+                    // Show a disabled button instead of picker when settings are open
+                    Button(action: {}) {
+                        HStack {
+                            Text(String(viewModel.selectedYear) + "年")
+                                .font(.custom(customFont, size: 14))
+                                .foregroundColor(themeManager.currentTheme.textColor.opacity(0.6))
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 12))
+                                .foregroundColor(themeManager.currentTheme.textColor.opacity(0.4))
+                        }
+                        .frame(width: 85, height: 20)
+                        .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.3))
+                        .cornerRadius(4)
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    .disabled(true)
+                } else {
+                    Picker("", selection: $viewModel.selectedYear) {
+                        ForEach(Array(viewModel.yearRange), id: \.self) { year in
+                            Text(String(year) + "年")
+                                .foregroundColor(themeManager.currentTheme.textColor)
+                                .tag(year)
+                        }
+                    }
+                    .onChange(of: viewModel.selectedYear) { _ in
+                        viewModel.updateSelectedDate()
+                    }
+                    .frame(width: 85, height: 20)  // 限制高度
+                    .clipped()  // 裁剪超出部分
+                    .labelsHidden()
+                    .accentColor(themeManager.currentTheme.accentColor)
+                    .zIndex(1)
+                    .menuStyle(BorderlessButtonMenuStyle())  // Use a more controlled menu style
+                    .compositingGroup()  // Ensure proper compositing
+                    .clipped()  // Double clipping for safety
                 }
-                .onChange(of: viewModel.selectedYear) { _ in
-                    viewModel.updateSelectedDate()
-                }
-                .frame(width: 85, height: 20)  // 限制高度
-                .clipped()  // 裁剪超出部分
-                .labelsHidden()
-                .accentColor(themeManager.currentTheme.accentColor)
 
                 // 月份切换按钮
                 Button(action: viewModel.previousMonth) {

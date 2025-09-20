@@ -507,7 +507,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     /// 检查应用是否已设置为开机启动
-    private func isLoginItemEnabled() -> Bool {
+    internal func isLoginItemEnabled() -> Bool {
         guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
             return false
         }

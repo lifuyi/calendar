@@ -178,16 +178,11 @@ struct CompactSettingsView: View {
                     // Other Settings
                     SettingsSection(title: "其他设置") {
                         VStack(spacing: 12) {
-                            SettingsRow(
+                            LoginItemSettingsRow(
                                 icon: "square.and.arrow.up",
                                 title: "开机启动",
                                 subtitle: "系统启动时自动运行"
-                            ) {
-                                // Toggle login item
-                                if let appDelegate = NSApp.delegate as? AppDelegate {
-                                    appDelegate.perform(#selector(AppDelegate.toggleLoginItem(_:)), with: nil)
-                                }
-                            }
+                            )
                             
                             SettingsRow(
                                 icon: "info.circle",
@@ -417,6 +412,65 @@ struct SettingsRow: View {
             .padding(.vertical, 6)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct LoginItemSettingsRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    @ObservedObject var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"
+    @State private var isEnabled: Bool = false
+    
+    var body: some View {
+        Button(action: toggleLoginItem) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 16))
+                    .foregroundColor(themeManager.currentTheme.accentColor)
+                    .frame(width: 20)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.custom(customFont, size: 14))
+                        .fontWeight(.medium)
+                        .foregroundColor(themeManager.currentTheme.textColor)
+                    Text(subtitle)
+                        .font(.custom(customFont, size: 11))
+                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                }
+                
+                Spacer()
+                
+                // Checkbox to show current state
+                Image(systemName: isEnabled ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 16))
+                    .foregroundColor(isEnabled ? themeManager.currentTheme.accentColor : themeManager.currentTheme.secondaryTextColor)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .onAppear {
+            updateLoginItemState()
+        }
+    }
+    
+    private func toggleLoginItem() {
+        if let appDelegate = NSApp.delegate as? AppDelegate {
+            appDelegate.perform(#selector(AppDelegate.toggleLoginItem(_:)), with: nil)
+            // Update the state after a short delay to allow the toggle to complete
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                updateLoginItemState()
+            }
+        }
+    }
+    
+    private func updateLoginItemState() {
+        if let appDelegate = NSApp.delegate as? AppDelegate {
+            isEnabled = appDelegate.isLoginItemEnabled()
+        }
     }
 }
 
