@@ -11,6 +11,7 @@ struct CalendarView: View {
     @State private var showEventListPopup = false
     @State private var selectedDateForEvent = Date()
     @State private var eventsForSelectedDate: [EKEvent] = []
+    @State private var showSettingsPopover = false
     
     // 格式化日期
     private func formattedDate(for date: Date) -> String {
@@ -107,8 +108,7 @@ struct CalendarView: View {
                             Spacer()
                             // 设置按钮
                             Button(action: {
-                                // 菜单操作将在AppDelegate中实现
-                                NSApp.sendAction(Selector(("showSettingsMenu:")), to: nil, from: nil)
+                                showSettingsPopover.toggle()
                             }) {
                                 Image(systemName: "gear")
                                     .font(.system(size: 12))
@@ -165,11 +165,47 @@ struct CalendarView: View {
                         .frame(width: 300)
                         .background(
                             themeManager.currentTheme.blurEnabled ?
-                            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity)) :
+                            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity, blurBackground: themeManager.currentTheme.blurBackground)) :
                             AnyView(themeManager.currentTheme.backgroundColor)
                         )
                         .cornerRadius(10)
                         .shadow(radius: 10)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            
+            // Settings popover
+            if showSettingsPopover {
+                Color.black.opacity(0.3)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        showSettingsPopover = false
+                    }
+                
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        CompactSettingsView(isPresented: $showSettingsPopover)
+                            .environmentObject(themeManager)
+                            .frame(width: 400, height: 500)
+                            .background(
+                                themeManager.currentTheme.blurEnabled ?
+                                AnyView(
+                                    VisualEffectBlur(
+                                        material: themeManager.currentTheme.blurMaterial.nsMaterial,
+                                        blendingMode: .behindWindow,
+                                        opacity: 0.95,
+                                        blurBackground: true
+                                    )
+                                ) :
+                                AnyView(themeManager.currentTheme.backgroundColor)
+                            )
+                            .cornerRadius(16)
+                            .shadow(radius: 20)
+                        Spacer()
+                    }
+                    Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }

@@ -98,7 +98,17 @@ struct EventsDrawerView: View {
                 themeManager.currentTheme.blurEnabled ?
                 AnyView(ZStack {
                     themeManager.currentTheme.gridBackgroundColor
-                    VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+                    if themeManager.currentTheme.blurBackground {
+                        OptimizedBlurEffect(
+                            material: themeManager.currentTheme.blurMaterial.nsMaterial,
+                            blendingMode: .behindWindow,
+                            opacity: themeManager.currentTheme.blurOpacity,
+                            blurBackground: true,
+                            intensity: .moderate
+                        )
+                    } else {
+                        VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity, blurBackground: false)
+                    }
                 }) :
                 AnyView(themeManager.currentTheme.gridBackgroundColor)
             )
@@ -170,7 +180,17 @@ struct EventsDrawerView: View {
             themeManager.currentTheme.blurEnabled ?
             AnyView(ZStack {
                 themeManager.currentTheme.gridBackgroundColor
-                VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
+                if themeManager.currentTheme.blurBackground {
+                    OptimizedBlurEffect(
+                        material: themeManager.currentTheme.blurMaterial.nsMaterial,
+                        blendingMode: .behindWindow,
+                        opacity: themeManager.currentTheme.blurOpacity,
+                        blurBackground: true,
+                        intensity: .strong
+                    )
+                } else {
+                    VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity, blurBackground: false)
+                }
             }) :
             AnyView(themeManager.currentTheme.gridBackgroundColor)
         )

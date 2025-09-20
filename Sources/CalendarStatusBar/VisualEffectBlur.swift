@@ -7,24 +7,40 @@ struct VisualEffectBlur: NSViewRepresentable {
     var material: NSVisualEffectView.Material
     var blendingMode: NSVisualEffectView.BlendingMode
     var opacity: Double
+    var blurBackground: Bool = false  // New parameter to control blur direction
     
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = material
-        view.blendingMode = blendingMode
+        // If blurBackground is true, always use .behindWindow to blur what's behind
+        view.blendingMode = blurBackground ? .behindWindow : blendingMode
         view.alphaValue = CGFloat(opacity)
         view.state = .active
         
-        // Simple, clean blur effect
+        // Enhanced blur effect with better visual properties
         view.wantsLayer = true
         view.layer?.cornerRadius = 10
+        
+        // Improve blur quality and performance
+        if blurBackground {
+            view.layer?.masksToBounds = false
+            view.layer?.shouldRasterize = false
+            // For background blur, we want smooth edges
+            view.layer?.allowsEdgeAntialiasing = true
+        } else {
+            // For foreground blur, optimize for clarity
+            view.layer?.masksToBounds = true
+            view.layer?.shouldRasterize = true
+            view.layer?.rasterizationScale = NSScreen.main?.backingScaleFactor ?? 2.0
+        }
         
         return view
     }
     
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
         nsView.material = material
-        nsView.blendingMode = blendingMode
+        // If blurBackground is true, always use .behindWindow to blur what's behind
+        nsView.blendingMode = blurBackground ? .behindWindow : blendingMode
         nsView.alphaValue = CGFloat(opacity)
     }
 }

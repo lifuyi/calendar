@@ -137,6 +137,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let attributedString = NSAttributedString(string: dateString, attributes: attributes)
             button.attributedTitle = attributedString
             button.action = #selector(togglePopover(_:))
+            button.target = self
+            
+            // Enable right-click menu
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
     }
     
@@ -210,6 +214,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc private func togglePopover(_ sender: AnyObject?) {
+        // Check if this was a right-click
+        if let event = NSApp.currentEvent, event.type == .rightMouseUp {
+            showSettingsMenu(sender)
+            return
+        }
+        
         if let button = statusItem?.button {
             if popover?.isShown == true {
                 popover?.performClose(sender)
@@ -263,26 +273,57 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // Blur effect submenu
+        // 毛玻璃效果子菜单 (Enhanced)
         let blurMenu = NSMenu(title: "毛玻璃效果")
         let blurItem = NSMenuItem(title: "毛玻璃效果", action: nil, keyEquivalent: "")
         blurItem.submenu = blurMenu
         
-        // Blur enabled toggle
+        // 启用/禁用毛玻璃效果
         let blurEnabledItem = NSMenuItem(title: "启用毛玻璃效果", action: #selector(toggleBlurEffect(_:)), keyEquivalent: "")
         blurEnabledItem.state = ThemeManager.shared.currentTheme.blurEnabled ? .on : .off
         blurMenu.addItem(blurEnabledItem)
         
-        // Blur opacity slider submenu
-        let opacityMenu = NSMenu(title: "透明度")
-        let opacityItem = NSMenuItem(title: "透明度", action: nil, keyEquivalent: "")
+        blurMenu.addItem(NSMenuItem.separator())
+        
+        // 虚化方向子菜单
+        let blurDirectionMenu = NSMenu(title: "虚化方向")
+        let blurDirectionItem = NSMenuItem(title: "虚化方向", action: nil, keyEquivalent: "")
+        blurDirectionItem.submenu = blurDirectionMenu
+        
+        let foregroundBlurItem = NSMenuItem(title: "前景虚化", action: #selector(setBlurDirection(_:)), keyEquivalent: "")
+        foregroundBlurItem.representedObject = false
+        foregroundBlurItem.state = !ThemeManager.shared.currentTheme.blurBackground ? .on : .off
+        blurDirectionMenu.addItem(foregroundBlurItem)
+        
+        let backgroundBlurItem = NSMenuItem(title: "背景虚化", action: #selector(setBlurDirection(_:)), keyEquivalent: "")
+        backgroundBlurItem.representedObject = true
+        backgroundBlurItem.state = ThemeManager.shared.currentTheme.blurBackground ? .on : .off
+        blurDirectionMenu.addItem(backgroundBlurItem)
+        
+        blurMenu.addItem(blurDirectionItem)
+        
+        // 虚化材质子菜单
+        let materialMenu = NSMenu(title: "虚化材质")
+        let materialItem = NSMenuItem(title: "虚化材质", action: nil, keyEquivalent: "")
+        materialItem.submenu = materialMenu
+        
+        for material in BlurMaterial.allCases {
+            let materialMenuItem = NSMenuItem(title: material.displayName, action: #selector(setBlurMaterial(_:)), keyEquivalent: "")
+            materialMenuItem.representedObject = material.rawValue
+            materialMenuItem.state = ThemeManager.shared.currentTheme.blurMaterial == material ? .on : .off
+            materialMenu.addItem(materialMenuItem)
+        }
+        
+        blurMenu.addItem(materialItem)
+        
+        // 虚化强度子菜单
+        let opacityMenu = NSMenu(title: "虚化强度")
+        let opacityItem = NSMenuItem(title: "虚化强度", action: nil, keyEquivalent: "")
         opacityItem.submenu = opacityMenu
         
-        // Add opacity options (20%, 40%, 60%, 80%, 100%, 120%, 150%)
-        let opacities = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5]
         let currentOpacity = ThemeManager.shared.currentTheme.blurOpacity
-        for opacity in opacities {
-            let opacityTitle = "\(Int(opacity * 100))%"
+        for opacity in [0.3, 0.5, 0.7, 0.8, 0.9, 1.0] {
+            let opacityTitle = String(format: "%.0f%%", opacity * 100)
             let opacityMenuItem = NSMenuItem(title: opacityTitle, action: #selector(setBlurOpacity(_:)), keyEquivalent: "")
             opacityMenuItem.representedObject = opacity
             opacityMenuItem.state = (abs(currentOpacity - opacity) < 0.01) ? .on : .off
@@ -290,6 +331,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         blurMenu.addItem(opacityItem)
+        
+        blurMenu.addItem(NSMenuItem.separator())
+        
+        // 快速预设
+        let presetsMenu = NSMenu(title: "快速预设")
+        let presetsItem = NSMenuItem(title: "快速预设", action: nil, keyEquivalent: "")
+        presetsItem.submenu = presetsMenu
+        
+        let subtlePresetItem = NSMenuItem(title: "柔和效果", action: #selector(applyBlurPreset(_:)), keyEquivalent: "")
+        subtlePresetItem.representedObject = "subtle"
+        presetsMenu.addItem(subtlePresetItem)
+        
+        let standardPresetItem = NSMenuItem(title: "标准效果", action: #selector(applyBlurPreset(_:)), keyEquivalent: "")
+        standardPresetItem.representedObject = "standard"
+        presetsMenu.addItem(standardPresetItem)
+        
+        let strongPresetItem = NSMenuItem(title: "强烈效果", action: #selector(applyBlurPreset(_:)), keyEquivalent: "")
+        strongPresetItem.representedObject = "strong"
+        presetsMenu.addItem(strongPresetItem)
+        
+        blurMenu.addItem(presetsItem)
+        
+        blurMenu.addItem(NSMenuItem.separator())
+        
+        // 高级设置
+        let advancedSettingsItem = NSMenuItem(title: "高级设置...", action: #selector(showAdvancedBlurSettings(_:)), keyEquivalent: "")
+        blurMenu.addItem(advancedSettingsItem)
         
         menu.addItem(blurItem)
         
@@ -364,6 +432,80 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    @objc private func setBlurDirection(_ sender: AnyObject?) {
+        guard let menuItem = sender as? NSMenuItem,
+              let blurBackground = menuItem.representedObject as? Bool else { return }
+        
+        ThemeManager.shared.setBlurBackground(blurBackground)
+        
+        // Update menu states
+        if let directionMenu = (sender as? NSMenuItem)?.menu {
+            for item in directionMenu.items {
+                item.state = .off
+            }
+        }
+        menuItem.state = .on
+    }
+    
+    @objc private func setBlurMaterial(_ sender: AnyObject?) {
+        guard let menuItem = sender as? NSMenuItem,
+              let materialRawValue = menuItem.representedObject as? String,
+              let material = BlurMaterial(rawValue: materialRawValue) else { return }
+        
+        ThemeManager.shared.setBlurMaterial(material)
+        
+        // Update menu states
+        if let materialMenu = (sender as? NSMenuItem)?.menu {
+            for item in materialMenu.items {
+                item.state = .off
+            }
+        }
+        menuItem.state = .on
+    }
+    
+    @objc private func applyBlurPreset(_ sender: AnyObject?) {
+        guard let menuItem = sender as? NSMenuItem,
+              let presetType = menuItem.representedObject as? String else { return }
+        
+        switch presetType {
+        case "subtle":
+            ThemeManager.shared.setBlurEffect(enabled: true, opacity: 0.6)
+            ThemeManager.shared.setBlurMaterial(.thin)
+            ThemeManager.shared.setBlurBackground(true)
+        case "standard":
+            ThemeManager.shared.setBlurEffect(enabled: true, opacity: 0.8)
+            ThemeManager.shared.setBlurMaterial(.regular)
+            ThemeManager.shared.setBlurBackground(true)
+        case "strong":
+            ThemeManager.shared.setBlurEffect(enabled: true, opacity: 0.95)
+            ThemeManager.shared.setBlurMaterial(.thick)
+            ThemeManager.shared.setBlurBackground(true)
+        default:
+            break
+        }
+    }
+    
+    @objc private func showAdvancedBlurSettings(_ sender: AnyObject?) {
+        // Create and show the advanced settings window
+        let advancedSettingsView = AdvancedSettingsView(themeManager: ThemeManager.shared)
+        let hostingController = NSHostingController(rootView: advancedSettingsView)
+        
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 700),
+            styleMask: [.titled, .closable, .resizable],
+            backing: .buffered,
+            defer: false
+        )
+        
+        window.title = "毛玻璃效果高级设置"
+        window.contentViewController = hostingController
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        
+        // Keep a reference to prevent the window from being deallocated
+        NSApp.activate(ignoringOtherApps: true)
+    }
+    
     /// 检查应用是否已设置为开机启动
     private func isLoginItemEnabled() -> Bool {
         guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
@@ -387,7 +529,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return jobDict?["OnDemand"] as? Bool != false
     }
     
-    @objc private func toggleLoginItem(_ sender: AnyObject?) {
+    @objc internal func toggleLoginItem(_ sender: AnyObject?) {
         if let bundleIdentifier = Bundle.main.bundleIdentifier {
             // 获取当前状态并切换
             let currentState = isLoginItemEnabled()

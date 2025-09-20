@@ -134,6 +134,7 @@ struct Theme {
     let blurEnabled: Bool
     let blurOpacity: Double
     let blurMaterial: BlurMaterial
+    let blurBackground: Bool  // 是否虚化背景层（true）而不是前景层（false）
     
     // 字体设置
     let fontSize: FontSize
@@ -156,9 +157,10 @@ struct Theme {
         todayTextColor: Color.blue,
         workdayColor: Color.orange,
         solarTermColor: Color.blue,
-        blurEnabled: false,
-        blurOpacity: 0.85,
-        blurMaterial: .regular,
+        blurEnabled: true,
+        blurOpacity: 0.7,
+        blurMaterial: .light,
+        blurBackground: false,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -180,6 +182,7 @@ struct Theme {
         blurEnabled: true,
         blurOpacity: 0.85,
         blurMaterial: .dark,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -201,6 +204,7 @@ struct Theme {
         blurEnabled: true,
         blurOpacity: 0.9,
         blurMaterial: .hudWindow,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -222,6 +226,7 @@ struct Theme {
         blurEnabled: true,
         blurOpacity: 0.9,
         blurMaterial: .thick,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -241,8 +246,9 @@ struct Theme {
         workdayColor: Color.orange,
         solarTermColor: Color(red: 0.5, green: 0.9, blue: 1.0),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .thin,
+        blurOpacity: 0.75,
+        blurMaterial: .ultraThin,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -264,6 +270,7 @@ struct Theme {
         blurEnabled: true,
         blurOpacity: 0.9,
         blurMaterial: .regular,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -282,9 +289,10 @@ struct Theme {
         todayTextColor: Color(red: 0.6, green: 0.2, blue: 0.4),
         workdayColor: Color(red: 0.8, green: 0.5, blue: 0.2),
         solarTermColor: Color(red: 0.7, green: 0.3, blue: 0.6),
-        blurEnabled: false,
-        blurOpacity: 0.85,
+        blurEnabled: true,
+        blurOpacity: 0.75,
         blurMaterial: .light,
+        blurBackground: false,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -304,8 +312,9 @@ struct Theme {
         workdayColor: Color(red: 0.9, green: 0.6, blue: 0.4),
         solarTermColor: Color(red: 0.8, green: 0.6, blue: 0.9),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .ultraThin,
+        blurOpacity: 0.8,
+        blurMaterial: .thin,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -325,8 +334,9 @@ struct Theme {
         workdayColor: Color(red: 1.0, green: 0.8, blue: 0.0),
         solarTermColor: Color(red: 0.4, green: 1.0, blue: 0.6),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .dark,
+        blurOpacity: 0.85,
+        blurMaterial: .hudWindow,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -348,6 +358,7 @@ struct Theme {
         blurEnabled: true,
         blurOpacity: 0.9,
         blurMaterial: .thick,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -369,6 +380,7 @@ struct Theme {
         blurEnabled: true,
         blurOpacity: 0.9,
         blurMaterial: .regular,
+        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -384,6 +396,7 @@ class ThemeManager: ObservableObject {
             UserDefaults.standard.set(currentTheme.blurEnabled, forKey: "blurEnabled")
             UserDefaults.standard.set(currentTheme.blurOpacity, forKey: "blurOpacity")
             UserDefaults.standard.set(currentTheme.blurMaterial.rawValue, forKey: "blurMaterial")
+            UserDefaults.standard.set(currentTheme.blurBackground, forKey: "blurBackground")
             UserDefaults.standard.set(currentTheme.fontSize.rawValue, forKey: "fontSize")
             
             // Save custom colors if they exist
@@ -413,6 +426,8 @@ class ThemeManager: ObservableObject {
         // 加载毛玻璃效果设置
         let blurEnabled = UserDefaults.standard.bool(forKey: "blurEnabled")
         let blurOpacity = UserDefaults.standard.double(forKey: "blurOpacity")
+        let blurBackground = UserDefaults.standard.object(forKey: "blurBackground") != nil ? 
+            UserDefaults.standard.bool(forKey: "blurBackground") : true
         
         if themeType == .system {
             // 根据系统外观设置主题
@@ -436,6 +451,7 @@ class ThemeManager: ObservableObject {
                 blurEnabled: blurEnabled,
                 blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5,
                 blurMaterial: theme.blurMaterial,
+                blurBackground: theme.blurBackground,
                 fontSize: theme.fontSize,
                 customAccentColor: theme.customAccentColor,
                 customTodayColor: theme.customTodayColor
@@ -460,6 +476,7 @@ class ThemeManager: ObservableObject {
                 blurEnabled: blurEnabled,
                 blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5,
                 blurMaterial: theme.blurMaterial,
+                blurBackground: theme.blurBackground,
                 fontSize: theme.fontSize,
                 customAccentColor: theme.customAccentColor,
                 customTodayColor: theme.customTodayColor
@@ -485,6 +502,7 @@ class ThemeManager: ObservableObject {
                 blurEnabled: blurEnabled,
                 blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5,
                 blurMaterial: theme.blurMaterial,
+                blurBackground: theme.blurBackground,
                 fontSize: theme.fontSize,
                 customAccentColor: theme.customAccentColor,
                 customTodayColor: theme.customTodayColor
@@ -551,6 +569,7 @@ class ThemeManager: ObservableObject {
                 blurEnabled: currentTheme.blurEnabled,
                 blurOpacity: currentTheme.blurOpacity,
                 blurMaterial: theme.blurMaterial,
+                blurBackground: theme.blurBackground,
                 fontSize: theme.fontSize,
                 customAccentColor: theme.customAccentColor,
                 customTodayColor: theme.customTodayColor
@@ -575,6 +594,7 @@ class ThemeManager: ObservableObject {
                 blurEnabled: currentTheme.blurEnabled,
                 blurOpacity: currentTheme.blurOpacity,
                 blurMaterial: theme.blurMaterial,
+                blurBackground: theme.blurBackground,
                 fontSize: theme.fontSize,
                 customAccentColor: theme.customAccentColor,
                 customTodayColor: theme.customTodayColor
@@ -600,6 +620,7 @@ class ThemeManager: ObservableObject {
                 blurEnabled: currentTheme.blurEnabled,
                 blurOpacity: currentTheme.blurOpacity,
                 blurMaterial: theme.blurMaterial,
+                blurBackground: theme.blurBackground,
                 fontSize: theme.fontSize,
                 customAccentColor: theme.customAccentColor,
                 customTodayColor: theme.customTodayColor
@@ -626,6 +647,7 @@ class ThemeManager: ObservableObject {
             blurEnabled: enabled,
             blurOpacity: opacity,
             blurMaterial: currentTheme.blurMaterial,
+            blurBackground: currentTheme.blurBackground,
             fontSize: currentTheme.fontSize,
             customAccentColor: currentTheme.customAccentColor,
             customTodayColor: currentTheme.customTodayColor
@@ -651,6 +673,33 @@ class ThemeManager: ObservableObject {
             blurEnabled: currentTheme.blurEnabled,
             blurOpacity: currentTheme.blurOpacity,
             blurMaterial: material,
+            blurBackground: currentTheme.blurBackground,
+            fontSize: currentTheme.fontSize,
+            customAccentColor: currentTheme.customAccentColor,
+            customTodayColor: currentTheme.customTodayColor
+        )
+        currentTheme = theme
+    }
+    
+    /// 设置虚化方向（虚化背景层还是前景层）
+    func setBlurBackground(_ blurBackground: Bool) {
+        let theme = Theme(
+            type: currentTheme.type,
+            backgroundColor: currentTheme.backgroundColor,
+            textColor: currentTheme.textColor,
+            secondaryTextColor: currentTheme.secondaryTextColor,
+            accentColor: currentTheme.accentColor,
+            gridBackgroundColor: currentTheme.gridBackgroundColor,
+            weekendColor: currentTheme.weekendColor,
+            holidayColor: currentTheme.holidayColor,
+            todayBackgroundColor: currentTheme.todayBackgroundColor,
+            todayTextColor: currentTheme.todayTextColor,
+            workdayColor: currentTheme.workdayColor,
+            solarTermColor: currentTheme.solarTermColor,
+            blurEnabled: currentTheme.blurEnabled,
+            blurOpacity: currentTheme.blurOpacity,
+            blurMaterial: currentTheme.blurMaterial,
+            blurBackground: blurBackground,
             fontSize: currentTheme.fontSize,
             customAccentColor: currentTheme.customAccentColor,
             customTodayColor: currentTheme.customTodayColor
@@ -676,6 +725,7 @@ class ThemeManager: ObservableObject {
             blurEnabled: currentTheme.blurEnabled,
             blurOpacity: currentTheme.blurOpacity,
             blurMaterial: currentTheme.blurMaterial,
+            blurBackground: currentTheme.blurBackground,
             fontSize: fontSize,
             customAccentColor: currentTheme.customAccentColor,
             customTodayColor: currentTheme.customTodayColor
@@ -701,6 +751,7 @@ class ThemeManager: ObservableObject {
             blurEnabled: currentTheme.blurEnabled,
             blurOpacity: currentTheme.blurOpacity,
             blurMaterial: currentTheme.blurMaterial,
+            blurBackground: currentTheme.blurBackground,
             fontSize: currentTheme.fontSize,
             customAccentColor: color,
             customTodayColor: currentTheme.customTodayColor
@@ -726,6 +777,7 @@ class ThemeManager: ObservableObject {
             blurEnabled: currentTheme.blurEnabled,
             blurOpacity: currentTheme.blurOpacity,
             blurMaterial: currentTheme.blurMaterial,
+            blurBackground: currentTheme.blurBackground,
             fontSize: currentTheme.fontSize,
             customAccentColor: currentTheme.customAccentColor,
             customTodayColor: color
