@@ -1,9 +1,12 @@
 import SwiftUI
+import AppKit
 
 struct CompactSettingsView: View {
     @Binding var isPresented: Bool
     @ObservedObject var themeManager = ThemeManager.shared
     private let customFont = "dingliesongtypeface"
+    @State private var animateContent = false
+    @State private var animateBlurSettings = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -31,25 +34,29 @@ struct CompactSettingsView: View {
             
             ScrollView {
                 VStack(spacing: 16) {  // Reduced from 20 to 16 for more compact layout
-                    // Theme Selection - More compact
+                    // Theme Selection - More compact with animation
                     SettingsSection(title: "主题选择") {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 6) {  // 4 columns, reduced spacing
-                            ForEach(ThemeType.allCases, id: \.self) { themeType in
+                            ForEach(Array(ThemeType.allCases.enumerated()), id: \.element) { index, themeType in
                                 ThemeSelectionButton(
                                     themeType: themeType,
                                     isSelected: themeManager.currentTheme.type == themeType
                                 ) {
                                     print("Setting theme to: \(themeType.displayName)")
-                                    themeManager.setTheme(themeType)
+                                    withAnimation(AnimationManager.shared.getAnimation(for: .theme)) {
+                                        themeManager.setTheme(themeType)
+                                    }
                                 }
+                                .scaleTransition(isVisible: animateContent, delay: Double(index) * 0.05)
                             }
                         }
                     }
+                    .fadeTransition(isVisible: animateContent, delay: 0.1)
                     
                     Divider()
                         .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
                     
-                    // Blur Settings
+                    // Blur Settings with animations
                     SettingsSection(title: "毛玻璃效果") {
                         VStack(spacing: 16) {
                             // Enable/Disable Toggle
@@ -62,11 +69,15 @@ struct CompactSettingsView: View {
                                     get: { themeManager.currentTheme.blurEnabled },
                                     set: { enabled in
                                         print("Toggling blur effect to: \(enabled)")
-                                        themeManager.setBlurEffect(enabled: enabled, opacity: themeManager.currentTheme.blurOpacity)
+                                        withAnimation(AnimationManager.shared.getAnimation(for: .blur)) {
+                                            themeManager.setBlurEffect(enabled: enabled, opacity: themeManager.currentTheme.blurOpacity)
+                                            animateBlurSettings = enabled
+                                        }
                                     }
                                 ))
                                 .toggleStyle(SwitchToggleStyle())
                             }
+                            .fadeTransition(isVisible: animateContent, delay: 0.2)
                             
                             if themeManager.currentTheme.blurEnabled {
                                 // Blur Direction
@@ -83,8 +94,11 @@ struct CompactSettingsView: View {
                                             isSelected: !themeManager.currentTheme.blurBackground
                                         ) {
                                             print("Setting blur direction to foreground")
-                                            themeManager.setBlurBackground(false)
+                                            withAnimation(AnimationManager.shared.getAnimation(for: .blur)) {
+                                                themeManager.setBlurBackground(false)
+                                            }
                                         }
+                                        .scaleTransition(isVisible: animateBlurSettings, delay: 0.1)
                                         
                                         BlurDirectionButton(
                                             title: "背景虚化",
@@ -92,8 +106,11 @@ struct CompactSettingsView: View {
                                             isSelected: themeManager.currentTheme.blurBackground
                                         ) {
                                             print("Setting blur direction to background")
-                                            themeManager.setBlurBackground(true)
+                                            withAnimation(AnimationManager.shared.getAnimation(for: .blur)) {
+                                                themeManager.setBlurBackground(true)
+                                            }
                                         }
+                                        .scaleTransition(isVisible: animateBlurSettings, delay: 0.15)
                                     }
                                 }
                                 
@@ -206,12 +223,39 @@ struct CompactSettingsView: View {
                             }
                         }
                     }
+                    
+                    Divider()
+                        .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
+                    
+                    // Exit Section - 退出应用部分
+                    SettingsSection(title: "应用控制") {
+                        VStack(spacing: 12) {
+                            ExitAppButton()
+                        }
+                    }
                 }
                 .padding(.horizontal, 12)  // Reduced from default padding
                 .padding(.vertical, 8)     // Reduced from default padding
             }
         }
         .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.95))
+        .onAppear {
+            // 启动进入动画
+            withAnimation(.easeOut(duration: 0.3)) {
+                animateContent = true
+            }
+            
+            // 如果虚化效果已启用，也启动相关动画
+            if themeManager.currentTheme.blurEnabled {
+                withAnimation(.easeOut(duration: 0.4).delay(0.2)) {
+                    animateBlurSettings = true
+                }
+            }
+        }
+        .onDisappear {
+            animateContent = false
+            animateBlurSettings = false
+        }
     }
 }
 
@@ -472,6 +516,72 @@ struct LoginItemSettingsRow: View {
     private func updateLoginItemState() {
         if let appDelegate = NSApp.delegate as? AppDelegate {
             isEnabled = appDelegate.isLoginItemEnabled()
+        }
+    }
+}
+
+// 退出应用按钮组件
+struct ExitAppButton: View {
+    @ObservedObject var themeManager = ThemeManager.shared
+    private let customFont = "dingliesongtypeface"
+    @State private var showingConfirmation = false
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: {
+            showingConfirmation = true
+        }) {
+            HStack(spacing: 12) {
+                Image(systemName: "power")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.red)
+                    .frame(width: 20)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("退出应用")
+                        .font(.custom(customFont, size: 14))
+                        .fontWeight(.medium)
+                        .foregroundColor(isHovered ? .red : themeManager.currentTheme.textColor)
+                    Text("完全关闭日历状态栏")
+                        .font(.custom(customFont, size: 11))
+                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                    .opacity(isHovered ? 1.0 : 0.6)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isHovered ? Color.red.opacity(0.1) : Color.clear)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(isHovered ? Color.red.opacity(0.3) : Color.clear, lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering
+            }
+        }
+        .scaleEffect(isHovered ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
+        .alert("确认退出", isPresented: $showingConfirmation) {
+            Button("取消", role: .cancel) { }
+            Button("退出", role: .destructive) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    NSApp.terminate(nil)
+                }
+            }
+        } message: {
+            Text("确定要退出日历状态栏应用吗？")
         }
     }
 }

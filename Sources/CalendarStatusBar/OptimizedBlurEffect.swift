@@ -62,6 +62,10 @@ struct OptimizedBlurEffect: NSViewRepresentable {
     }
     
     private func configureView(_ view: NSVisualEffectView) {
+        // 使用 CATransaction 包装所有变更以提高性能
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
         view.material = material
         view.blendingMode = blurBackground ? .behindWindow : blendingMode
         view.alphaValue = CGFloat(opacity * intensity.multiplier)
@@ -73,34 +77,57 @@ struct OptimizedBlurEffect: NSViewRepresentable {
         
         // Optimize based on blur direction and intensity
         if blurBackground {
-            // Background blur optimizations
+            // Background blur optimizations - 针对背景虚化优化
             view.layer?.masksToBounds = false
             view.layer?.shouldRasterize = false
             view.layer?.allowsEdgeAntialiasing = true
             
-            // Add subtle shadow for depth when using strong blur
+            // 减少不必要的阴影计算
             if intensity.additionalBlur {
-                view.layer?.shadowOpacity = 0.1
-                view.layer?.shadowRadius = 2
-                view.layer?.shadowOffset = CGSize(width: 0, height: 1)
+                view.layer?.shadowOpacity = 0.08  // 减少阴影强度以提高性能
+                view.layer?.shadowRadius = 1.5
+                view.layer?.shadowOffset = CGSize(width: 0, height: 0.5)
                 view.layer?.shadowColor = NSColor.black.cgColor
+                view.layer?.shadowPath = CGPath(roundedRect: view.bounds, 
+                                               cornerWidth: cornerRadius, 
+                                               cornerHeight: cornerRadius, 
+                                               transform: nil)
             }
         } else {
-            // Foreground blur optimizations
+            // Foreground blur optimizations - 针对前景虚化优化
             view.layer?.masksToBounds = true
             view.layer?.shouldRasterize = true
             view.layer?.rasterizationScale = NSScreen.main?.backingScaleFactor ?? 2.0
             
-            // Add subtle border for definition
+            // 仅在需要时添加边框
             if intensity == .subtle {
                 view.layer?.borderWidth = 0.5
-                view.layer?.borderColor = NSColor.controlAccentColor.withAlphaComponent(0.2).cgColor
+                view.layer?.borderColor = NSColor.controlAccentColor.withAlphaComponent(0.15).cgColor
             }
         }
         
-        // Performance optimizations
+        // 增强的性能优化
         view.layer?.drawsAsynchronously = true
         view.layerUsesCoreImageFilters = false
+        
+        // 禁用隐式动画以提高性能
+        view.layer?.actions = [
+            "opacity": NSNull(),
+            "transform": NSNull(),
+            "position": NSNull(),
+            "bounds": NSNull()
+        ]
+        
+        // 优化合成
+        view.layer?.isOpaque = false
+        view.layer?.allowsGroupOpacity = true
+        
+        // 针对高 DPI 显示器的优化
+        if let screen = NSScreen.main, screen.backingScaleFactor > 1.0 {
+            view.layer?.contentsScale = screen.backingScaleFactor
+        }
+        
+        CATransaction.commit()
     }
 }
 
