@@ -81,6 +81,10 @@ struct CalendarHeaderView: View {
             }
             .padding(.horizontal)
 
+            // 添加空行
+            Spacer()
+                .frame(height: 10)
+
             // 星期标题
             HStack(spacing: 0) {
                 ForEach(["周日", "周一", "周二", "周三", "周四", "周五", "周六"], id: \.self) { weekday in
