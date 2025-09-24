@@ -83,6 +83,10 @@ struct CalendarView: View {
                         CalendarGridView(viewModel: viewModel)
                             .padding(.horizontal)
                         
+                        // 添加空行
+                        Spacer()
+                            .frame(height: 10)
+                        
                         // 底部信息
                         HStack {
                             Text("第\(viewModel.dayOfYear(for: viewModel.currentDate))天·第\(viewModel.weekOfYear(for: viewModel.currentDate))周 \(viewModel.zodiacSign(for: viewModel.currentDate))\(getZodiacEmoji(for: viewModel.currentDate))")

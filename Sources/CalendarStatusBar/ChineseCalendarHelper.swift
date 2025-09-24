@@ -1,6 +1,6 @@
 import Foundation
 
-class ChineseCalendarHelper {
+public class ChineseCalendarHelper {
     // 添加缓存日历实例
     private static let gregorianCalendar = Calendar.current
     private static let chineseCalendar = Calendar(identifier: .chinese)
@@ -189,18 +189,12 @@ class ChineseCalendarHelper {
     }
     
     // 判断日期是否为24节气
-    static func isSolarTerm(_ date: Date) -> Bool {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM-dd"
-        let dateString = formatter.string(from: date)
-        return solarTerms[dateString] != nil
+    public static func isSolarTerm(_ date: Date) -> Bool {
+        return PreciseSolarTermCalculator.isSolarTerm(date)
     }
     
     // 获取节气名称
-    static func solarTermName(for date: Date) -> String? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM-dd"
-        let dateString = formatter.string(from: date)
-        return solarTerms[dateString]
+    public static func solarTermName(for date: Date) -> String? {
+        return PreciseSolarTermCalculator.solarTermName(for: date)
     }
 }

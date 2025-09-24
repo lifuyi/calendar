@@ -7,7 +7,7 @@ struct CalendarGridView: View {
     
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 0) {
-            ForEach(viewModel.days.indices, id: \.self) { index in
+                        ForEach(viewModel.days.prefix(35).indices, id: \.self) { index in
                 let day = viewModel.days[index]
                 let isWeekend = viewModel.isWeekendDate(day.date)
                 let isToday = viewModel.isToday(day.date)
