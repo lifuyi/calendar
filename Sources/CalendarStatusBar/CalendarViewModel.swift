@@ -322,8 +322,20 @@ class CalendarViewModel: ObservableObject {
     // 处理日期变化
     private func handleDateChange() {
         let newDate = Date()
+        let calendar = Calendar.current
+        let newYear = calendar.component(.year, from: newDate)
+        let newMonth = calendar.component(.month, from: newDate)
+        
         currentDate = newDate
         lastKnownDate = newDate
+        
+        // 检查是否需要切换到新的月份和年份
+        if selectedYear != newYear || selectedMonth != newMonth {
+            selectedYear = newYear
+            selectedMonth = newMonth
+            updateDays()
+            print("日期跨月/跨年变化，切换到新的月份: \(newYear)年\(newMonth)月")
+        }
         
         print("处理日期变化，强制更新今天高亮")
         // 强制触发视图更新以确保"今天"的高亮同步
@@ -348,6 +360,17 @@ class CalendarViewModel: ObservableObject {
         
         // 如果日期发生了变化，强制刷新今天的高亮显示
         if dateChanged {
+            let newYear = newDateComponents.year!
+            let newMonth = newDateComponents.month!
+            
+            // 检查是否需要切换到新的月份和年份
+            if selectedYear != newYear || selectedMonth != newMonth {
+                selectedYear = newYear
+                selectedMonth = newMonth
+                updateDays()
+                print("日期跨月/跨年变化，切换到新的月份: \(newYear)年\(newMonth)月")
+            }
+            
             print("日期发生变化，更新今天高亮显示")
             // 强制触发视图更新以确保"今天"的高亮同步
             objectWillChange.send()
