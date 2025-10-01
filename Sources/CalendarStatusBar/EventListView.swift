@@ -118,35 +118,49 @@ struct EventItemView: View {
             return
         }
         
-        // Fallback: Open Calendar app to the event's date
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day], from: event.startDate)
-        components.hour = 12
-        components.minute = 0
-        
-        // Create a calendar URL with the date
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        let dateString = formatter.string(from: event.startDate)
-        
-        // Try different URL formats for Calendar app
-        let urls = [
-            "calshow:\(Int(event.startDate.timeIntervalSince1970))",
-            "webcal://localhost/event?date=\(dateString)"
+        // Try to open Calendar app directly - this is more reliable than custom URL schemes
+        let calendarBundleIdentifiers = [
+            "com.apple.iCal",      // Calendar app (older identifier)
+            "com.apple.Calendar"   // Calendar app (newer identifier)
         ]
         
-        for urlString in urls {
-            if let url = URL(string: urlString) {
-                if NSWorkspace.shared.open(url) {
-                    return
+        var calendarOpened = false
+        
+        for bundleId in calendarBundleIdentifiers {
+            if let calendarAppURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
+                do {
+                    // Try to open Calendar app and bring it to front
+                    try NSWorkspace.shared.launchApplication(at: calendarAppURL, 
+                                                           options: [.andHide, .withErrorPresentation], 
+                                                           configuration: [:])
+                    calendarOpened = true
+                    break
+                } catch {
+                    continue
                 }
             }
         }
         
-        // Final fallback: Just open Calendar app
-        if let calendarAppURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Calendar") {
-            NSWorkspace.shared.openApplication(at: calendarAppURL, configuration: NSWorkspace.OpenConfiguration())
+        // If Calendar app couldn't be opened, try alternative calendar apps
+        if !calendarOpened {
+            let alternativeApps = [
+                "com.microsoft.Outlook",
+                "com.busymac.busycal3",
+                "com.flexibits.fantastical2.mac"
+            ]
+            
+            for bundleId in alternativeApps {
+                if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
+                    do {
+                        try NSWorkspace.shared.launchApplication(at: appURL, 
+                                                               options: [.withErrorPresentation], 
+                                                               configuration: [:])
+                        break
+                    } catch {
+                        continue
+                    }
+                }
+            }
         }
     }
     
