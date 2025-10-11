@@ -190,11 +190,11 @@ public class ChineseCalendarHelper {
     
     // 判断日期是否为24节气
     public static func isSolarTerm(_ date: Date) -> Bool {
-        return PreciseSolarTermCalculator.isSolarTerm(date)
+        return LunarBarSolarTermCalculator.isSolarTerm(date)
     }
     
     // 获取节气名称
     public static func solarTermName(for date: Date) -> String? {
-        return PreciseSolarTermCalculator.solarTermName(for: date)
+        return LunarBarSolarTermCalculator.solarTermName(for: date)
     }
 }

@@ -63,6 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var eventMonitor: Any?
     private var quitShortcutMonitor: Any?
     private var ipLocationService: IPLocationService?
+    private var weatherService: WeatherService?
     
     // 注册自定义字体
     private func registerCustomFont() {
@@ -89,6 +90,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 首先注册自定义字体
         registerCustomFont()
         
+        // 初始化节气计算器
+        LunarBarSolarTermCalculator.initialize()
+        
         setupUI()
         startStatusBarTimer()
         setupKeyboardShortcuts()
@@ -106,6 +110,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // 初始化主题管理器
         _ = ThemeManager.shared
+        
+        // 设置定时更新管理器
+        setupPeriodicUpdates()
+    }
+    
+    func applicationWillTerminate(_ notification: Notification) {
+        print("AppDelegate: 应用程序即将退出，停止定时更新")
+        PeriodicUpdateManager.shared.stopPeriodicUpdates()
     }
     
     // 拆分设置UI的逻辑
@@ -125,6 +137,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             return event // Pass the event to the next responder
         }
+    }
+    
+    private func setupPeriodicUpdates() {
+        print("AppDelegate: 设置定时更新管理器")
+        
+        // 获取服务实例
+        let locationService = IPLocationService.shared
+        let weatherService = WeatherService()
+        
+        // 关联天气服务和位置服务
+        weatherService.setLocationService(locationService)
+        
+        // 设置服务到定时更新管理器
+        PeriodicUpdateManager.shared.setServices(
+            locationService: locationService,
+            weatherService: weatherService
+        )
+        
+        // 启动定时更新
+        PeriodicUpdateManager.shared.startPeriodicUpdates()
+        
+        // 将天气服务存储为实例变量，防止被释放
+        self.weatherService = weatherService
     }
     
     private func setupStatusItem() {
