@@ -40,14 +40,7 @@ struct EventListView: View {
                 .buttonStyle(PlainButtonStyle())
             }
             .padding()
-            .background(
-                themeManager.currentTheme.blurEnabled ?
-                AnyView(ZStack {
-                    themeManager.currentTheme.gridBackgroundColor
-                    VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
-                }) :
-                AnyView(themeManager.currentTheme.gridBackgroundColor)
-            )
+            .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.9))
             
             // Events list
             if events.isEmpty {
@@ -86,14 +79,7 @@ struct EventListView: View {
             .padding()
         }
         .frame(width: 300, height: 400)
-        .background(
-            themeManager.currentTheme.blurEnabled ?
-            AnyView(ZStack {
-                themeManager.currentTheme.backgroundColor
-                VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity)
-            }) :
-            AnyView(themeManager.currentTheme.backgroundColor)
-        )
+        .background(themeManager.currentTheme.backgroundColor.opacity(0.9))
         .cornerRadius(10)
         .shadow(radius: 10)
     }
@@ -218,14 +204,7 @@ struct EventItemView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(
-            themeManager.currentTheme.blurEnabled ?
-            AnyView(ZStack {
-                themeManager.currentTheme.gridBackgroundColor
-                VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity * 0.5)
-            }) :
-            AnyView(themeManager.currentTheme.gridBackgroundColor)
-        )
+        .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.8))
         .cornerRadius(6)
         .onTapGesture {
             openCalendarApp()

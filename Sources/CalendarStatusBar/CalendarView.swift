@@ -144,7 +144,9 @@ struct CalendarView: View {
             }
             .padding()
             .background(
-                themeManager.currentTheme.backgroundColor
+                themeManager.currentTheme.blurEnabled ?
+                AnyView(Color.clear) :
+                AnyView(themeManager.currentTheme.backgroundColor)
             )
             
             // 悬浮式事件抽屉
@@ -168,9 +170,7 @@ struct CalendarView: View {
                     EventCreationView(isPresented: $showEventCreationPopup, selectedDate: selectedDateForEvent)
                         .frame(width: 300)
                         .background(
-                            themeManager.currentTheme.blurEnabled ?
-                            AnyView(VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .behindWindow, opacity: themeManager.currentTheme.blurOpacity, blurBackground: themeManager.currentTheme.blurBackground)) :
-                            AnyView(themeManager.currentTheme.backgroundColor)
+                            themeManager.currentTheme.backgroundColor.opacity(0.9)
                         )
                         .cornerRadius(10)
                         .shadow(radius: 10)
@@ -196,18 +196,9 @@ struct CalendarView: View {
                         Spacer()
                         CompactSettingsView(isPresented: $showSettingsPopover)
                             .environmentObject(themeManager)
-                            .frame(width: 380, height: 420)  // More compact fixed size  // More compact fixed size
+                            .frame(width: 380, height: 420)
                             .background(
-                                themeManager.currentTheme.blurEnabled ?
-                                AnyView(
-                                    VisualEffectBlur(
-                                        material: themeManager.currentTheme.blurMaterial.nsMaterial,
-                                        blendingMode: .behindWindow,
-                                        opacity: 0.95,
-                                        blurBackground: true
-                                    )
-                                ) :
-                                AnyView(themeManager.currentTheme.backgroundColor)
+                                themeManager.currentTheme.backgroundColor.opacity(0.9)
                             )
                             .cornerRadius(16)
                             .shadow(radius: 20)

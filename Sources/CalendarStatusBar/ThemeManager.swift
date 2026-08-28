@@ -15,6 +15,9 @@ enum ThemeType: String, CaseIterable {
     case neon = "Neon"
     case autumn = "Autumn"
     case tropical = "Tropical"
+    case matcha = "Matcha"
+    case roseGold = "RoseGold"
+    case arctic = "Arctic"
     
     var displayName: String {
         switch self {
@@ -30,6 +33,9 @@ enum ThemeType: String, CaseIterable {
         case .neon: return "霓虹"
         case .autumn: return "秋日"
         case .tropical: return "热带"
+        case .matcha: return "抹茶"
+        case .roseGold: return "玫瑰金"
+        case .arctic: return "极地冰川"
         }
     }
 }
@@ -78,43 +84,6 @@ enum FontSize: String, CaseIterable {
     }
 }
 
-// 毛玻璃材质选项
-enum BlurMaterial: String, CaseIterable {
-    case light = "Light"
-    case dark = "Dark"
-    case ultraThin = "UltraThin"
-    case thin = "Thin"
-    case regular = "Regular"
-    case thick = "Thick"
-    case hudWindow = "HudWindow"
-    
-    var displayName: String {
-        switch self {
-        case .light: return "浅色"
-        case .dark: return "深色"
-        case .ultraThin: return "超薄"
-        case .thin: return "薄"
-        case .regular: return "标准"
-        case .thick: return "厚"
-        case .hudWindow: return "HUD窗口"
-        }
-    }
-    
-    #if canImport(AppKit)
-    var nsMaterial: NSVisualEffectView.Material {
-        switch self {
-        case .light: return .underWindowBackground
-        case .dark: return .fullScreenUI
-        case .ultraThin: return .underWindowBackground
-        case .thin: return .windowBackground
-        case .regular: return .menu
-        case .thick: return .popover
-        case .hudWindow: return .hudWindow
-        }
-    }
-    #endif
-}
-
 // 主题结构体
 struct Theme {
     let type: ThemeType
@@ -130,11 +99,9 @@ struct Theme {
     let workdayColor: Color
     let solarTermColor: Color
     
-    // 毛玻璃效果属性
+    // 毛玻璃效果 - 仅保留开关和整体透明度
     let blurEnabled: Bool
     let blurOpacity: Double
-    let blurMaterial: BlurMaterial
-    let blurBackground: Bool  // 是否虚化背景层（true）而不是前景层（false）
     
     // 字体设置
     let fontSize: FontSize
@@ -143,7 +110,8 @@ struct Theme {
     let customAccentColor: Color?
     let customTodayColor: Color?
     
-    // 预设主题
+    // MARK: - 预设主题
+    
     static let light = Theme(
         type: .light,
         backgroundColor: Color.white,
@@ -158,9 +126,7 @@ struct Theme {
         workdayColor: Color.orange,
         solarTermColor: Color.blue,
         blurEnabled: true,
-        blurOpacity: 0.7,
-        blurMaterial: .light,
-        blurBackground: false,
+        blurOpacity: 0.75,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -181,8 +147,6 @@ struct Theme {
         solarTermColor: Color.blue,
         blurEnabled: true,
         blurOpacity: 0.85,
-        blurMaterial: .dark,
-        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -202,9 +166,7 @@ struct Theme {
         workdayColor: Color.orange,
         solarTermColor: Color(red: 0.4, green: 0.9, blue: 0.8),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .hudWindow,
-        blurBackground: true,
+        blurOpacity: 0.8,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -224,9 +186,7 @@ struct Theme {
         workdayColor: Color.orange,
         solarTermColor: Color(red: 1.0, green: 0.7, blue: 0.5),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .thick,
-        blurBackground: true,
+        blurOpacity: 0.8,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -247,8 +207,6 @@ struct Theme {
         solarTermColor: Color(red: 0.5, green: 0.9, blue: 1.0),
         blurEnabled: true,
         blurOpacity: 0.75,
-        blurMaterial: .ultraThin,
-        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -268,9 +226,7 @@ struct Theme {
         workdayColor: Color(red: 0.9, green: 0.7, blue: 0.3),
         solarTermColor: Color(red: 0.5, green: 0.9, blue: 0.5),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .regular,
-        blurBackground: true,
+        blurOpacity: 0.8,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -291,8 +247,6 @@ struct Theme {
         solarTermColor: Color(red: 0.7, green: 0.3, blue: 0.6),
         blurEnabled: true,
         blurOpacity: 0.75,
-        blurMaterial: .light,
-        blurBackground: false,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -313,8 +267,6 @@ struct Theme {
         solarTermColor: Color(red: 0.8, green: 0.6, blue: 0.9),
         blurEnabled: true,
         blurOpacity: 0.8,
-        blurMaterial: .thin,
-        blurBackground: true,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -334,9 +286,7 @@ struct Theme {
         workdayColor: Color(red: 1.0, green: 0.8, blue: 0.0),
         solarTermColor: Color(red: 0.4, green: 1.0, blue: 0.6),
         blurEnabled: true,
-        blurOpacity: 0.85,
-        blurMaterial: .hudWindow,
-        blurBackground: true,
+        blurOpacity: 0.8,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -356,9 +306,7 @@ struct Theme {
         workdayColor: Color(red: 0.8, green: 0.7, blue: 0.3),
         solarTermColor: Color(red: 0.9, green: 0.7, blue: 0.4),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .thick,
-        blurBackground: true,
+        blurOpacity: 0.8,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -378,14 +326,126 @@ struct Theme {
         workdayColor: Color(red: 0.9, green: 0.5, blue: 0.1),
         solarTermColor: Color(red: 0.6, green: 0.9, blue: 0.3),
         blurEnabled: true,
-        blurOpacity: 0.9,
-        blurMaterial: .regular,
-        blurBackground: true,
+        blurOpacity: 0.8,
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
     )
+    
+    static let matcha = Theme(
+        type: .matcha,
+        backgroundColor: Color(red: 0.92, green: 0.95, blue: 0.88),
+        textColor: Color(red: 0.2, green: 0.3, blue: 0.15),
+        secondaryTextColor: Color(red: 0.45, green: 0.55, blue: 0.4),
+        accentColor: Color(red: 0.45, green: 0.65, blue: 0.3),
+        gridBackgroundColor: Color(red: 0.88, green: 0.92, blue: 0.82),
+        weekendColor: Color(red: 0.6, green: 0.5, blue: 0.2),
+        holidayColor: Color(red: 0.85, green: 0.3, blue: 0.25),
+        todayBackgroundColor: Color(red: 0.5, green: 0.7, blue: 0.35).opacity(0.3),
+        todayTextColor: Color(red: 0.25, green: 0.4, blue: 0.15),
+        workdayColor: Color(red: 0.7, green: 0.55, blue: 0.2),
+        solarTermColor: Color(red: 0.4, green: 0.6, blue: 0.3),
+        blurEnabled: true,
+        blurOpacity: 0.75,
+        fontSize: .medium,
+        customAccentColor: nil,
+        customTodayColor: nil
+    )
+    
+    static let roseGold = Theme(
+        type: .roseGold,
+        backgroundColor: Color(red: 0.96, green: 0.93, blue: 0.93),
+        textColor: Color(red: 0.35, green: 0.2, blue: 0.25),
+        secondaryTextColor: Color(red: 0.6, green: 0.45, blue: 0.5),
+        accentColor: Color(red: 0.75, green: 0.4, blue: 0.5),
+        gridBackgroundColor: Color(red: 0.93, green: 0.88, blue: 0.88),
+        weekendColor: Color(red: 0.7, green: 0.35, blue: 0.45),
+        holidayColor: Color(red: 0.85, green: 0.25, blue: 0.3),
+        todayBackgroundColor: Color(red: 0.8, green: 0.5, blue: 0.55).opacity(0.3),
+        todayTextColor: Color(red: 0.5, green: 0.2, blue: 0.3),
+        workdayColor: Color(red: 0.75, green: 0.55, blue: 0.2),
+        solarTermColor: Color(red: 0.7, green: 0.4, blue: 0.55),
+        blurEnabled: true,
+        blurOpacity: 0.75,
+        fontSize: .medium,
+        customAccentColor: nil,
+        customTodayColor: nil
+    )
+    
+    static let arctic = Theme(
+        type: .arctic,
+        backgroundColor: Color(red: 0.93, green: 0.96, blue: 0.99),
+        textColor: Color(red: 0.15, green: 0.25, blue: 0.4),
+        secondaryTextColor: Color(red: 0.4, green: 0.55, blue: 0.7),
+        accentColor: Color(red: 0.2, green: 0.55, blue: 0.85),
+        gridBackgroundColor: Color(red: 0.88, green: 0.93, blue: 0.97),
+        weekendColor: Color(red: 0.3, green: 0.5, blue: 0.75),
+        holidayColor: Color(red: 0.9, green: 0.3, blue: 0.35),
+        todayBackgroundColor: Color(red: 0.3, green: 0.65, blue: 0.9).opacity(0.3),
+        todayTextColor: Color(red: 0.1, green: 0.35, blue: 0.65),
+        workdayColor: Color(red: 0.6, green: 0.5, blue: 0.2),
+        solarTermColor: Color(red: 0.25, green: 0.6, blue: 0.8),
+        blurEnabled: true,
+        blurOpacity: 0.75,
+        fontSize: .medium,
+        customAccentColor: nil,
+        customTodayColor: nil
+    )
+    
+    // MARK: - Theme Copy Helpers
+    
+    func withBlurEnabled(_ enabled: Bool) -> Theme {
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: enabled, blurOpacity: blurOpacity, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
+    }
+    
+    func withBlurOpacity(_ opacity: Double) -> Theme {
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: opacity, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
+    }
+    
+    func withFontSize(_ size: FontSize) -> Theme {
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: blurOpacity, fontSize: size, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
+    }
+    
+    func withCustomAccentColor(_ color: Color?) -> Theme {
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: blurOpacity, fontSize: fontSize, customAccentColor: color, customTodayColor: customTodayColor)
+    }
+    
+    func withCustomTodayColor(_ color: Color?) -> Theme {
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: blurOpacity, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: color)
+    }
 }
+
+// MARK: - Theme Factory
+
+extension Theme {
+    static func theme(for type: ThemeType) -> Theme {
+        switch type {
+        case .light: return Theme.light
+        case .dark: return Theme.dark
+        case .aurora: return Theme.aurora
+        case .sunset: return Theme.sunset
+        case .ocean: return Theme.ocean
+        case .forest: return Theme.forest
+        case .cherryBlossom: return Theme.cherryBlossom
+        case .lavender: return Theme.lavender
+        case .neon: return Theme.neon
+        case .autumn: return Theme.autumn
+        case .tropical: return Theme.tropical
+        case .matcha: return Theme.matcha
+        case .roseGold: return Theme.roseGold
+        case .arctic: return Theme.arctic
+        case .system:
+            #if os(macOS)
+            let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            return isDark ? .dark : .light
+            #else
+            return .light
+            #endif
+        }
+    }
+}
+
+// MARK: - Theme Manager
 
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
@@ -395,11 +455,8 @@ class ThemeManager: ObservableObject {
             UserDefaults.standard.set(currentTheme.type.rawValue, forKey: "selectedTheme")
             UserDefaults.standard.set(currentTheme.blurEnabled, forKey: "blurEnabled")
             UserDefaults.standard.set(currentTheme.blurOpacity, forKey: "blurOpacity")
-            UserDefaults.standard.set(currentTheme.blurMaterial.rawValue, forKey: "blurMaterial")
-            UserDefaults.standard.set(currentTheme.blurBackground, forKey: "blurBackground")
             UserDefaults.standard.set(currentTheme.fontSize.rawValue, forKey: "fontSize")
             
-            // Save custom colors if they exist
             if let customAccent = currentTheme.customAccentColor {
                 if let colorData = try? NSKeyedArchiver.archivedData(withRootObject: NSColor(customAccent), requiringSecureCoding: false) {
                     UserDefaults.standard.set(colorData, forKey: "customAccentColor")
@@ -419,378 +476,69 @@ class ThemeManager: ObservableObject {
     }
     
     private init() {
-        // 从 UserDefaults 加载保存的主题，如果没有则使用系统默认
         let savedThemeType = UserDefaults.standard.string(forKey: "selectedTheme") ?? ThemeType.system.rawValue
         let themeType = ThemeType(rawValue: savedThemeType) ?? .system
-        
-        // 加载毛玻璃效果设置
-        let blurEnabled = UserDefaults.standard.bool(forKey: "blurEnabled")
+        let blurEnabled = UserDefaults.standard.object(forKey: "blurEnabled") != nil ?
+            UserDefaults.standard.bool(forKey: "blurEnabled") : true
         let blurOpacity = UserDefaults.standard.double(forKey: "blurOpacity")
-        let blurBackground = UserDefaults.standard.object(forKey: "blurBackground") != nil ? 
-            UserDefaults.standard.bool(forKey: "blurBackground") : true
         
+        var baseTheme: Theme
         if themeType == .system {
-            // 根据系统外观设置主题
             #if os(macOS)
             let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            var theme = isDark ? Theme.dark : Theme.light
-            // 更新主题以包含毛玻璃效果设置
-            theme = Theme(
-                type: theme.type,
-                backgroundColor: theme.backgroundColor,
-                textColor: theme.textColor,
-                secondaryTextColor: theme.secondaryTextColor,
-                accentColor: theme.accentColor,
-                gridBackgroundColor: theme.gridBackgroundColor,
-                weekendColor: theme.weekendColor,
-                holidayColor: theme.holidayColor,
-                todayBackgroundColor: theme.todayBackgroundColor,
-                todayTextColor: theme.todayTextColor,
-                workdayColor: theme.workdayColor,
-                solarTermColor: theme.solarTermColor,
-                blurEnabled: blurEnabled,
-                blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5,
-                blurMaterial: theme.blurMaterial,
-                blurBackground: theme.blurBackground,
-                fontSize: theme.fontSize,
-                customAccentColor: theme.customAccentColor,
-                customTodayColor: theme.customTodayColor
-            )
-            currentTheme = theme
+            baseTheme = isDark ? Theme.dark : Theme.light
             #else
-            var theme = Theme.light
-            // 更新主题以包含毛玻璃效果设置
-            theme = Theme(
-                type: theme.type,
-                backgroundColor: theme.backgroundColor,
-                textColor: theme.textColor,
-                secondaryTextColor: theme.secondaryTextColor,
-                accentColor: theme.accentColor,
-                gridBackgroundColor: theme.gridBackgroundColor,
-                weekendColor: theme.weekendColor,
-                holidayColor: theme.holidayColor,
-                todayBackgroundColor: theme.todayBackgroundColor,
-                todayTextColor: theme.todayTextColor,
-                workdayColor: theme.workdayColor,
-                solarTermColor: theme.solarTermColor,
-                blurEnabled: blurEnabled,
-                blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5,
-                blurMaterial: theme.blurMaterial,
-                blurBackground: theme.blurBackground,
-                fontSize: theme.fontSize,
-                customAccentColor: theme.customAccentColor,
-                customTodayColor: theme.customTodayColor
-            )
-            currentTheme = theme
+            baseTheme = Theme.light
             #endif
         } else {
-            var theme = ThemeManager.theme(for: themeType)
-            // 更新主题以包含毛玻璃效果设置
-            theme = Theme(
-                type: theme.type,
-                backgroundColor: theme.backgroundColor,
-                textColor: theme.textColor,
-                secondaryTextColor: theme.secondaryTextColor,
-                accentColor: theme.accentColor,
-                gridBackgroundColor: theme.gridBackgroundColor,
-                weekendColor: theme.weekendColor,
-                holidayColor: theme.holidayColor,
-                todayBackgroundColor: theme.todayBackgroundColor,
-                todayTextColor: theme.todayTextColor,
-                workdayColor: theme.workdayColor,
-                solarTermColor: theme.solarTermColor,
-                blurEnabled: blurEnabled,
-                blurOpacity: blurOpacity > 0 ? blurOpacity : 0.5,
-                blurMaterial: theme.blurMaterial,
-                blurBackground: theme.blurBackground,
-                fontSize: theme.fontSize,
-                customAccentColor: theme.customAccentColor,
-                customTodayColor: theme.customTodayColor
-            )
-            currentTheme = theme
+            baseTheme = Theme.theme(for: themeType)
         }
-    }
-    
-    static func theme(for type: ThemeType) -> Theme {
-        switch type {
-        case .light:
-            return Theme.light
-        case .dark:
-            return Theme.dark
-        case .aurora:
-            return Theme.aurora
-        case .sunset:
-            return Theme.sunset
-        case .ocean:
-            return Theme.ocean
-        case .forest:
-            return Theme.forest
-        case .cherryBlossom:
-            return Theme.cherryBlossom
-        case .lavender:
-            return Theme.lavender
-        case .neon:
-            return Theme.neon
-        case .autumn:
-            return Theme.autumn
-        case .tropical:
-            return Theme.tropical
-        case .system:
-            // 系统主题在运行时根据系统外观决定
-            #if os(macOS)
-            let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            return isDark ? .dark : .light
-            #else
-            return .light
-            #endif
-        }
+        
+        currentTheme = baseTheme
+            .withBlurEnabled(blurEnabled)
+            .withBlurOpacity(blurOpacity > 0 ? blurOpacity : 0.75)
     }
     
     func setTheme(_ type: ThemeType) {
+        var baseTheme: Theme
         if type == .system {
-            // 根据系统外观设置主题
             #if os(macOS)
             let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            var theme = isDark ? Theme.dark : Theme.light
-            // 更新主题以包含毛玻璃效果设置
-            theme = Theme(
-                type: theme.type,
-                backgroundColor: theme.backgroundColor,
-                textColor: theme.textColor,
-                secondaryTextColor: theme.secondaryTextColor,
-                accentColor: theme.accentColor,
-                gridBackgroundColor: theme.gridBackgroundColor,
-                weekendColor: theme.weekendColor,
-                holidayColor: theme.holidayColor,
-                todayBackgroundColor: theme.todayBackgroundColor,
-                todayTextColor: theme.todayTextColor,
-                workdayColor: theme.workdayColor,
-                solarTermColor: theme.solarTermColor,
-                blurEnabled: currentTheme.blurEnabled,
-                blurOpacity: currentTheme.blurOpacity,
-                blurMaterial: theme.blurMaterial,
-                blurBackground: theme.blurBackground,
-                fontSize: theme.fontSize,
-                customAccentColor: theme.customAccentColor,
-                customTodayColor: theme.customTodayColor
-            )
-            currentTheme = theme
+            baseTheme = isDark ? Theme.dark : Theme.light
             #else
-            var theme = Theme.light
-            // 更新主题以包含毛玻璃效果设置
-            theme = Theme(
-                type: theme.type,
-                backgroundColor: theme.backgroundColor,
-                textColor: theme.textColor,
-                secondaryTextColor: theme.secondaryTextColor,
-                accentColor: theme.accentColor,
-                gridBackgroundColor: theme.gridBackgroundColor,
-                weekendColor: theme.weekendColor,
-                holidayColor: theme.holidayColor,
-                todayBackgroundColor: theme.todayBackgroundColor,
-                todayTextColor: theme.todayTextColor,
-                workdayColor: theme.workdayColor,
-                solarTermColor: theme.solarTermColor,
-                blurEnabled: currentTheme.blurEnabled,
-                blurOpacity: currentTheme.blurOpacity,
-                blurMaterial: theme.blurMaterial,
-                blurBackground: theme.blurBackground,
-                fontSize: theme.fontSize,
-                customAccentColor: theme.customAccentColor,
-                customTodayColor: theme.customTodayColor
-            )
-            currentTheme = theme
+            baseTheme = Theme.light
             #endif
         } else {
-            var theme = ThemeManager.theme(for: type)
-            // 更新主题以包含毛玻璃效果设置
-            theme = Theme(
-                type: theme.type,
-                backgroundColor: theme.backgroundColor,
-                textColor: theme.textColor,
-                secondaryTextColor: theme.secondaryTextColor,
-                accentColor: theme.accentColor,
-                gridBackgroundColor: theme.gridBackgroundColor,
-                weekendColor: theme.weekendColor,
-                holidayColor: theme.holidayColor,
-                todayBackgroundColor: theme.todayBackgroundColor,
-                todayTextColor: theme.todayTextColor,
-                workdayColor: theme.workdayColor,
-                solarTermColor: theme.solarTermColor,
-                blurEnabled: currentTheme.blurEnabled,
-                blurOpacity: currentTheme.blurOpacity,
-                blurMaterial: theme.blurMaterial,
-                blurBackground: theme.blurBackground,
-                fontSize: theme.fontSize,
-                customAccentColor: theme.customAccentColor,
-                customTodayColor: theme.customTodayColor
-            )
-            currentTheme = theme
+            baseTheme = Theme.theme(for: type)
         }
+        
+        currentTheme = baseTheme
+            .withBlurEnabled(currentTheme.blurEnabled)
+            .withBlurOpacity(currentTheme.blurOpacity)
     }
     
-    /// 设置毛玻璃效果
     func setBlurEffect(enabled: Bool, opacity: Double) {
-        let theme = Theme(
-            type: currentTheme.type,
-            backgroundColor: currentTheme.backgroundColor,
-            textColor: currentTheme.textColor,
-            secondaryTextColor: currentTheme.secondaryTextColor,
-            accentColor: currentTheme.accentColor,
-            gridBackgroundColor: currentTheme.gridBackgroundColor,
-            weekendColor: currentTheme.weekendColor,
-            holidayColor: currentTheme.holidayColor,
-            todayBackgroundColor: currentTheme.todayBackgroundColor,
-            todayTextColor: currentTheme.todayTextColor,
-            workdayColor: currentTheme.workdayColor,
-            solarTermColor: currentTheme.solarTermColor,
-            blurEnabled: enabled,
-            blurOpacity: opacity,
-            blurMaterial: currentTheme.blurMaterial,
-            blurBackground: currentTheme.blurBackground,
-            fontSize: currentTheme.fontSize,
-            customAccentColor: currentTheme.customAccentColor,
-            customTodayColor: currentTheme.customTodayColor
-        )
-        currentTheme = theme
+        currentTheme = currentTheme
+            .withBlurEnabled(enabled)
+            .withBlurOpacity(opacity)
     }
     
-    /// 设置毛玻璃材质
-    func setBlurMaterial(_ material: BlurMaterial) {
-        let theme = Theme(
-            type: currentTheme.type,
-            backgroundColor: currentTheme.backgroundColor,
-            textColor: currentTheme.textColor,
-            secondaryTextColor: currentTheme.secondaryTextColor,
-            accentColor: currentTheme.accentColor,
-            gridBackgroundColor: currentTheme.gridBackgroundColor,
-            weekendColor: currentTheme.weekendColor,
-            holidayColor: currentTheme.holidayColor,
-            todayBackgroundColor: currentTheme.todayBackgroundColor,
-            todayTextColor: currentTheme.todayTextColor,
-            workdayColor: currentTheme.workdayColor,
-            solarTermColor: currentTheme.solarTermColor,
-            blurEnabled: currentTheme.blurEnabled,
-            blurOpacity: currentTheme.blurOpacity,
-            blurMaterial: material,
-            blurBackground: currentTheme.blurBackground,
-            fontSize: currentTheme.fontSize,
-            customAccentColor: currentTheme.customAccentColor,
-            customTodayColor: currentTheme.customTodayColor
-        )
-        currentTheme = theme
-    }
-    
-    /// 设置虚化方向（虚化背景层还是前景层）
-    func setBlurBackground(_ blurBackground: Bool) {
-        let theme = Theme(
-            type: currentTheme.type,
-            backgroundColor: currentTheme.backgroundColor,
-            textColor: currentTheme.textColor,
-            secondaryTextColor: currentTheme.secondaryTextColor,
-            accentColor: currentTheme.accentColor,
-            gridBackgroundColor: currentTheme.gridBackgroundColor,
-            weekendColor: currentTheme.weekendColor,
-            holidayColor: currentTheme.holidayColor,
-            todayBackgroundColor: currentTheme.todayBackgroundColor,
-            todayTextColor: currentTheme.todayTextColor,
-            workdayColor: currentTheme.workdayColor,
-            solarTermColor: currentTheme.solarTermColor,
-            blurEnabled: currentTheme.blurEnabled,
-            blurOpacity: currentTheme.blurOpacity,
-            blurMaterial: currentTheme.blurMaterial,
-            blurBackground: blurBackground,
-            fontSize: currentTheme.fontSize,
-            customAccentColor: currentTheme.customAccentColor,
-            customTodayColor: currentTheme.customTodayColor
-        )
-        currentTheme = theme
-    }
-    
-    /// 设置字体大小
     func setFontSize(_ fontSize: FontSize) {
-        let theme = Theme(
-            type: currentTheme.type,
-            backgroundColor: currentTheme.backgroundColor,
-            textColor: currentTheme.textColor,
-            secondaryTextColor: currentTheme.secondaryTextColor,
-            accentColor: currentTheme.accentColor,
-            gridBackgroundColor: currentTheme.gridBackgroundColor,
-            weekendColor: currentTheme.weekendColor,
-            holidayColor: currentTheme.holidayColor,
-            todayBackgroundColor: currentTheme.todayBackgroundColor,
-            todayTextColor: currentTheme.todayTextColor,
-            workdayColor: currentTheme.workdayColor,
-            solarTermColor: currentTheme.solarTermColor,
-            blurEnabled: currentTheme.blurEnabled,
-            blurOpacity: currentTheme.blurOpacity,
-            blurMaterial: currentTheme.blurMaterial,
-            blurBackground: currentTheme.blurBackground,
-            fontSize: fontSize,
-            customAccentColor: currentTheme.customAccentColor,
-            customTodayColor: currentTheme.customTodayColor
-        )
-        currentTheme = theme
+        currentTheme = currentTheme.withFontSize(fontSize)
     }
     
-    /// 设置自定义强调色
     func setCustomAccentColor(_ color: Color?) {
-        let theme = Theme(
-            type: currentTheme.type,
-            backgroundColor: currentTheme.backgroundColor,
-            textColor: currentTheme.textColor,
-            secondaryTextColor: currentTheme.secondaryTextColor,
-            accentColor: currentTheme.accentColor,
-            gridBackgroundColor: currentTheme.gridBackgroundColor,
-            weekendColor: currentTheme.weekendColor,
-            holidayColor: currentTheme.holidayColor,
-            todayBackgroundColor: currentTheme.todayBackgroundColor,
-            todayTextColor: currentTheme.todayTextColor,
-            workdayColor: currentTheme.workdayColor,
-            solarTermColor: currentTheme.solarTermColor,
-            blurEnabled: currentTheme.blurEnabled,
-            blurOpacity: currentTheme.blurOpacity,
-            blurMaterial: currentTheme.blurMaterial,
-            blurBackground: currentTheme.blurBackground,
-            fontSize: currentTheme.fontSize,
-            customAccentColor: color,
-            customTodayColor: currentTheme.customTodayColor
-        )
-        currentTheme = theme
+        currentTheme = currentTheme.withCustomAccentColor(color)
     }
     
-    /// 设置自定义今日颜色
     func setCustomTodayColor(_ color: Color?) {
-        let theme = Theme(
-            type: currentTheme.type,
-            backgroundColor: currentTheme.backgroundColor,
-            textColor: currentTheme.textColor,
-            secondaryTextColor: currentTheme.secondaryTextColor,
-            accentColor: currentTheme.accentColor,
-            gridBackgroundColor: currentTheme.gridBackgroundColor,
-            weekendColor: currentTheme.weekendColor,
-            holidayColor: currentTheme.holidayColor,
-            todayBackgroundColor: currentTheme.todayBackgroundColor,
-            todayTextColor: currentTheme.todayTextColor,
-            workdayColor: currentTheme.workdayColor,
-            solarTermColor: currentTheme.solarTermColor,
-            blurEnabled: currentTheme.blurEnabled,
-            blurOpacity: currentTheme.blurOpacity,
-            blurMaterial: currentTheme.blurMaterial,
-            blurBackground: currentTheme.blurBackground,
-            fontSize: currentTheme.fontSize,
-            customAccentColor: currentTheme.customAccentColor,
-            customTodayColor: color
-        )
-        currentTheme = theme
+        currentTheme = currentTheme.withCustomTodayColor(color)
     }
     
-    /// 获取有效的强调色（优先使用自定义颜色）
     var effectiveAccentColor: Color {
         return currentTheme.customAccentColor ?? currentTheme.accentColor
     }
     
-    /// 获取有效的今日颜色（优先使用自定义颜色）
     var effectiveTodayColor: Color {
         return currentTheme.customTodayColor ?? currentTheme.todayBackgroundColor
     }

@@ -94,24 +94,7 @@ struct EventsDrawerView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            .background(
-                themeManager.currentTheme.blurEnabled ?
-                AnyView(ZStack {
-                    themeManager.currentTheme.gridBackgroundColor
-                    if themeManager.currentTheme.blurBackground {
-                        OptimizedBlurEffect(
-                            material: themeManager.currentTheme.blurMaterial.nsMaterial,
-                            blendingMode: .behindWindow,
-                            opacity: themeManager.currentTheme.blurOpacity,
-                            blurBackground: true,
-                            intensity: .moderate
-                        )
-                    } else {
-                        VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity, blurBackground: false)
-                    }
-                }) :
-                AnyView(themeManager.currentTheme.gridBackgroundColor)
-            )
+            .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.8))
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()
@@ -176,24 +159,7 @@ struct EventsDrawerView: View {
         .frame(maxWidth: .infinity)
         .frame(height: isExpanded ? 200 : 30, alignment: .top) // Fixed height when expanded
         .animation(.easeInOut, value: isExpanded)
-        .background(
-            themeManager.currentTheme.blurEnabled ?
-            AnyView(ZStack {
-                themeManager.currentTheme.gridBackgroundColor
-                if themeManager.currentTheme.blurBackground {
-                    OptimizedBlurEffect(
-                        material: themeManager.currentTheme.blurMaterial.nsMaterial,
-                        blendingMode: .behindWindow,
-                        opacity: themeManager.currentTheme.blurOpacity,
-                        blurBackground: true,
-                        intensity: .strong
-                    )
-                } else {
-                    VisualEffectBlur(material: themeManager.currentTheme.blurMaterial.nsMaterial, blendingMode: .withinWindow, opacity: themeManager.currentTheme.blurOpacity, blurBackground: false)
-                }
-            }) :
-            AnyView(themeManager.currentTheme.gridBackgroundColor)
-        )
+        .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.8))
         .cornerRadius(8)
         .shadow(radius: 5)
         .padding(.bottom, 20) // 添加底部边距确保可见

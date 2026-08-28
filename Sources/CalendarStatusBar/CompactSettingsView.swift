@@ -6,14 +6,13 @@ struct CompactSettingsView: View {
     @ObservedObject var themeManager = ThemeManager.shared
     private let customFont = "dingliesongtypeface"
     @State private var animateContent = false
-    @State private var animateBlurSettings = false
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header - More compact
+            // Header
             HStack {
                 Text("设置")
-                    .font(.custom(customFont, size: 18))  // Smaller font
+                    .font(.custom(customFont, size: 18))
                     .fontWeight(.bold)
                     .foregroundColor(themeManager.currentTheme.textColor)
                 
@@ -23,26 +22,25 @@ struct CompactSettingsView: View {
                     isPresented = false
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 18))  // Smaller close button
+                        .font(.system(size: 18))
                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            .padding(.horizontal, 16)  // Reduced horizontal padding
-            .padding(.vertical, 12)    // Reduced vertical padding
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .background(themeManager.currentTheme.accentColor.opacity(0.1))
             
             ScrollView {
-                VStack(spacing: 16) {  // Reduced from 20 to 16 for more compact layout
-                    // Theme Selection - More compact with animation
+                VStack(spacing: 16) {
+                    // Theme Selection
                     SettingsSection(title: "主题选择") {
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 6) {  // 4 columns, reduced spacing
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 6) {
                             ForEach(Array(ThemeType.allCases.enumerated()), id: \.element) { index, themeType in
                                 ThemeSelectionButton(
                                     themeType: themeType,
                                     isSelected: themeManager.currentTheme.type == themeType
                                 ) {
-                                    print("Setting theme to: \(themeType.displayName)")
                                     withAnimation(AnimationManager.shared.getAnimation(for: .theme)) {
                                         themeManager.setTheme(themeType)
                                     }
@@ -56,139 +54,34 @@ struct CompactSettingsView: View {
                     Divider()
                         .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
                     
-                    // Blur Settings with animations
-                    SettingsSection(title: "毛玻璃效果") {
-                        VStack(spacing: 16) {
-                            // Enable/Disable Toggle
-                            HStack {
-                                Text("启用毛玻璃效果")
+                    // 毛玻璃开关
+                    SettingsSection(title: "视觉效果") {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("毛玻璃效果")
                                     .font(.custom(customFont, size: 14))
                                     .foregroundColor(themeManager.currentTheme.textColor)
-                                Spacer()
-                                Toggle("", isOn: Binding(
-                                    get: { themeManager.currentTheme.blurEnabled },
-                                    set: { enabled in
-                                        print("Toggling blur effect to: \(enabled)")
-                                        withAnimation(AnimationManager.shared.getAnimation(for: .blur)) {
-                                            themeManager.setBlurEffect(enabled: enabled, opacity: themeManager.currentTheme.blurOpacity)
-                                            animateBlurSettings = enabled
-                                        }
-                                    }
-                                ))
-                                .toggleStyle(SwitchToggleStyle())
+                                Text("关闭后颜色更加鲜明")
+                                    .font(.custom(customFont, size: 11))
+                                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             }
-                            .fadeTransition(isVisible: animateContent, delay: 0.2)
-                            
-                            if themeManager.currentTheme.blurEnabled {
-                                // Blur Direction
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("虚化方向")
-                                        .font(.custom(customFont, size: 14))
-                                        .fontWeight(.medium)
-                                        .foregroundColor(themeManager.currentTheme.textColor)
-                                    
-                                    HStack(spacing: 12) {
-                                        BlurDirectionButton(
-                                            title: "前景虚化",
-                                            subtitle: "传统方式",
-                                            isSelected: !themeManager.currentTheme.blurBackground
-                                        ) {
-                                            print("Setting blur direction to foreground")
-                                            withAnimation(AnimationManager.shared.getAnimation(for: .blur)) {
-                                                themeManager.setBlurBackground(false)
-                                            }
-                                        }
-                                        .scaleTransition(isVisible: animateBlurSettings, delay: 0.1)
-                                        
-                                        BlurDirectionButton(
-                                            title: "背景虚化",
-                                            subtitle: "推荐新功能",
-                                            isSelected: themeManager.currentTheme.blurBackground
-                                        ) {
-                                            print("Setting blur direction to background")
-                                            withAnimation(AnimationManager.shared.getAnimation(for: .blur)) {
-                                                themeManager.setBlurBackground(true)
-                                            }
-                                        }
-                                        .scaleTransition(isVisible: animateBlurSettings, delay: 0.15)
-                                    }
-                                }
-                                
-                                // Blur Intensity
-                                VStack(alignment: .leading, spacing: 8) {
-                                    HStack {
-                                        Text("虚化强度")
-                                            .font(.custom(customFont, size: 14))
-                                            .fontWeight(.medium)
-                                            .foregroundColor(themeManager.currentTheme.textColor)
-                                        Spacer()
-                                        Text("\(Int(themeManager.currentTheme.blurOpacity * 100))%")
-                                            .font(.custom(customFont, size: 12))
-                                            .foregroundColor(themeManager.currentTheme.accentColor)
-                                    }
-                                    
-                                    Slider(
-                                        value: Binding(
-                                            get: { themeManager.currentTheme.blurOpacity },
-                                            set: { opacity in
-                                                themeManager.setBlurEffect(enabled: themeManager.currentTheme.blurEnabled, opacity: opacity)
-                                            }
-                                        ),
-                                        in: 0.1...1.0,
-                                        step: 0.05
-                                    )
-                                    .accentColor(themeManager.currentTheme.accentColor)
-                                }
-                                
-                                // Quick Presets
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("快速预设")
-                                        .font(.custom(customFont, size: 14))
-                                        .fontWeight(.medium)
-                                        .foregroundColor(themeManager.currentTheme.textColor)
-                                    
-                                    HStack(spacing: 8) {
-                                        PresetButton(title: "柔和", subtitle: "60%") {
-                                            themeManager.setBlurEffect(enabled: true, opacity: 0.6)
-                                            themeManager.setBlurMaterial(.thin)
-                                            themeManager.setBlurBackground(true)
-                                        }
-                                        
-                                        PresetButton(title: "标准", subtitle: "80%") {
-                                            themeManager.setBlurEffect(enabled: true, opacity: 0.8)
-                                            themeManager.setBlurMaterial(.regular)
-                                            themeManager.setBlurBackground(true)
-                                        }
-                                        
-                                        PresetButton(title: "强烈", subtitle: "95%") {
-                                            themeManager.setBlurEffect(enabled: true, opacity: 0.95)
-                                            themeManager.setBlurMaterial(.thick)
-                                            themeManager.setBlurBackground(true)
+                            Spacer()
+                            Toggle("", isOn: Binding(
+                                get: { themeManager.currentTheme.blurEnabled },
+                                set: { enabled in
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        themeManager.setBlurEffect(enabled: enabled, opacity: themeManager.currentTheme.blurOpacity)
+                                        // 通知 App 刷新底层 blur view
+                                        if let appDelegate = NSApp.delegate as? AppDelegate {
+                                            appDelegate.updateBlurVisibility()
                                         }
                                     }
                                 }
-                                
-                                // Blur Material
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("虚化材质")
-                                        .font(.custom(customFont, size: 14))
-                                        .fontWeight(.medium)
-                                        .foregroundColor(themeManager.currentTheme.textColor)
-                                    
-                                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 6) {
-                                        ForEach(BlurMaterial.allCases, id: \.self) { material in
-                                            MaterialButton(
-                                                material: material,
-                                                isSelected: themeManager.currentTheme.blurMaterial == material
-                                            ) {
-                                                themeManager.setBlurMaterial(material)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            ))
+                            .toggleStyle(SwitchToggleStyle())
                         }
                     }
+                    .fadeTransition(isVisible: animateContent, delay: 0.15)
                     
                     Divider()
                         .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
@@ -227,34 +120,25 @@ struct CompactSettingsView: View {
                     Divider()
                         .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
                     
-                    // Exit Section - 退出应用部分
+                    // Exit Section
                     SettingsSection(title: "应用控制") {
                         VStack(spacing: 12) {
                             ExitAppButton()
                         }
                     }
                 }
-                .padding(.horizontal, 12)  // Reduced from default padding
-                .padding(.vertical, 8)     // Reduced from default padding
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
             }
         }
         .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.95))
         .onAppear {
-            // 启动进入动画
             withAnimation(.easeOut(duration: 0.3)) {
                 animateContent = true
-            }
-            
-            // 如果虚化效果已启用，也启动相关动画
-            if themeManager.currentTheme.blurEnabled {
-                withAnimation(.easeOut(duration: 0.4).delay(0.2)) {
-                    animateBlurSettings = true
-                }
             }
         }
         .onDisappear {
             animateContent = false
-            animateBlurSettings = false
         }
     }
 }
@@ -271,9 +155,9 @@ struct SettingsSection<Content: View>: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {  // Reduced from 12 to 8
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.custom(customFont, size: 14))  // Smaller font
+                .font(.custom(customFont, size: 14))
                 .fontWeight(.semibold)
                 .foregroundColor(themeManager.currentTheme.textColor)
             
@@ -324,101 +208,10 @@ struct ThemeSelectionButton: View {
         case .neon: return Color(red: 0.0, green: 1.0, blue: 0.8)
         case .autumn: return Color(red: 0.9, green: 0.6, blue: 0.2)
         case .tropical: return Color(red: 1.0, green: 0.8, blue: 0.0)
+        case .matcha: return Color(red: 0.45, green: 0.65, blue: 0.3)
+        case .roseGold: return Color(red: 0.75, green: 0.4, blue: 0.5)
+        case .arctic: return Color(red: 0.2, green: 0.55, blue: 0.85)
         }
-    }
-}
-
-struct BlurDirectionButton: View {
-    let title: String
-    let subtitle: String
-    let isSelected: Bool
-    let action: () -> Void
-    @ObservedObject var themeManager = ThemeManager.shared
-    private let customFont = "dingliesongtypeface"
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(isSelected ? themeManager.currentTheme.accentColor : themeManager.currentTheme.secondaryTextColor)
-                    Text(title)
-                        .font(.custom(customFont, size: 12))
-                        .fontWeight(.medium)
-                        .foregroundColor(themeManager.currentTheme.textColor)
-                    Spacer()
-                }
-                Text(subtitle)
-                    .font(.custom(customFont, size: 10))
-                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(
-                isSelected ? 
-                themeManager.currentTheme.accentColor.opacity(0.1) : 
-                themeManager.currentTheme.gridBackgroundColor.opacity(0.5)
-            )
-            .cornerRadius(8)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct PresetButton: View {
-    let title: String
-    let subtitle: String
-    let action: () -> Void
-    @ObservedObject var themeManager = ThemeManager.shared
-    private let customFont = "dingliesongtypeface"
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 2) {
-                Text(title)
-                    .font(.custom(customFont, size: 12))
-                    .fontWeight(.medium)
-                    .foregroundColor(themeManager.currentTheme.textColor)
-                Text(subtitle)
-                    .font(.custom(customFont, size: 10))
-                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(themeManager.currentTheme.accentColor.opacity(0.2))
-            .cornerRadius(6)
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
-struct MaterialButton: View {
-    let material: BlurMaterial
-    let isSelected: Bool
-    let action: () -> Void
-    @ObservedObject var themeManager = ThemeManager.shared
-    private let customFont = "dingliesongtypeface"
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(isSelected ? themeManager.currentTheme.accentColor : themeManager.currentTheme.secondaryTextColor)
-                Text(material.displayName)
-                    .font(.custom(customFont, size: 11))
-                    .foregroundColor(themeManager.currentTheme.textColor)
-                Spacer()
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                isSelected ? 
-                themeManager.currentTheme.accentColor.opacity(0.1) : 
-                Color.clear
-            )
-            .cornerRadius(4)
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -489,7 +282,6 @@ struct LoginItemSettingsRow: View {
                 
                 Spacer()
                 
-                // Checkbox to show current state
                 Image(systemName: isEnabled ? "checkmark.square.fill" : "square")
                     .font(.system(size: 16))
                     .foregroundColor(isEnabled ? themeManager.currentTheme.accentColor : themeManager.currentTheme.secondaryTextColor)
@@ -506,7 +298,6 @@ struct LoginItemSettingsRow: View {
     private func toggleLoginItem() {
         if let appDelegate = NSApp.delegate as? AppDelegate {
             appDelegate.perform(#selector(AppDelegate.toggleLoginItem(_:)), with: nil)
-            // Update the state after a short delay to allow the toggle to complete
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 updateLoginItemState()
             }
@@ -520,7 +311,6 @@ struct LoginItemSettingsRow: View {
     }
 }
 
-// 退出应用按钮组件
 struct ExitAppButton: View {
     @ObservedObject var themeManager = ThemeManager.shared
     private let customFont = "dingliesongtypeface"
