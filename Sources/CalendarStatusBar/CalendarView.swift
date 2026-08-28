@@ -128,7 +128,7 @@ struct CalendarView: View {
                     .frame(maxHeight: .infinity, alignment: .top)
                     .padding()
                     .background(
-                        AnyView(themeManager.currentTheme.gridBackgroundColor.opacity(0.85))
+                        AnyView(themeManager.currentTheme.gridBackgroundColor.opacity(0.65))
                     )
                     .cornerRadius(10)
                     .padding(.bottom, 50)
