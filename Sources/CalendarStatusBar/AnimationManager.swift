@@ -46,8 +46,6 @@ class AnimationManager: ObservableObject {
     /// 获取优化的动画配置
     func getAnimation(for type: AnimationType) -> Animation {
         switch type {
-        case .blur:
-            return AnimationConfig.smooth.timingCurve
         case .theme:
             return AnimationConfig.gentle.timingCurve
         case .settings:
@@ -64,8 +62,6 @@ class AnimationManager: ObservableObject {
     /// 获取动画时长
     func getDuration(for type: AnimationType) -> Double {
         switch type {
-        case .blur:
-            return AnimationConfig.smooth.duration
         case .theme:
             return AnimationConfig.gentle.duration
         case .settings:
@@ -82,7 +78,6 @@ class AnimationManager: ObservableObject {
 
 /// 动画类型枚举
 enum AnimationType {
-    case blur      // 虚化效果动画
     case theme     // 主题切换动画
     case settings  // 设置界面动画
     case popup     // 弹出动画

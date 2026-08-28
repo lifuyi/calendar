@@ -179,8 +179,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    private var blurView: NSVisualEffectView?
-    
     private func setupPopover() {
         popover = NSPopover()
         popover?.contentSize = Constants.popoverSize
@@ -197,33 +195,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         hostingController.view.wantsLayer = true
         hostingController.view.layer?.backgroundColor = NSColor.clear.cgColor
         
-        // 毛玻璃背景
-        let blur = NSVisualEffectView()
-        blur.material = .popover
-        blur.blendingMode = .behindWindow
-        blur.state = .active
-        blur.wantsLayer = true
-        blur.layer?.cornerRadius = 12
-        blur.layer?.masksToBounds = true
-        blur.isHidden = !ThemeManager.shared.currentTheme.blurEnabled
-        self.blurView = blur
-        
-        hostingController.view.addSubview(blur, positioned: .below, relativeTo: nil)
-        blur.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            blur.topAnchor.constraint(equalTo: hostingController.view.topAnchor),
-            blur.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
-            blur.leadingAnchor.constraint(equalTo: hostingController.view.leadingAnchor),
-            blur.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
-        ])
-        
         popover?.contentViewController = hostingController
-    }
-    
-    /// 毛玻璃开关联动：切换时更新底层 NSVisualEffectView 的显隐
-    func updateBlurVisibility() {
-        let enabled = ThemeManager.shared.currentTheme.blurEnabled
-        blurView?.isHidden = !enabled
     }
     
     private func startStatusBarTimer() {
@@ -344,13 +316,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // 毛玻璃效果
-        let blurItem = NSMenuItem(title: "毛玻璃效果", action: #selector(toggleBlurEffect(_:)), keyEquivalent: "")
-        blurItem.state = ThemeManager.shared.currentTheme.blurEnabled ? .on : .off
-        menu.addItem(blurItem)
-        
-        menu.addItem(NSMenuItem.separator())
-        
         // GitHub link
         let githubItem = NSMenuItem(title: "GitHub", action: #selector(openGitHub(_:)), keyEquivalent: "")
         menu.addItem(githubItem)
@@ -387,18 +352,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     item.state = (itemThemeRawValue == themeType.rawValue) ? .on : .off
                 }
             }
-        }
-    }
-    
-    @objc private func toggleBlurEffect(_ sender: AnyObject?) {
-        let themeManager = ThemeManager.shared
-        let newEnabledState = !themeManager.currentTheme.blurEnabled
-        themeManager.setBlurEffect(enabled: newEnabledState, opacity: themeManager.currentTheme.blurOpacity)
-        
-        updateBlurVisibility()
-        
-        if let menuItem = sender as? NSMenuItem {
-            menuItem.state = newEnabledState ? .on : .off
         }
     }
     

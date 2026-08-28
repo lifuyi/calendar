@@ -99,10 +99,6 @@ struct Theme {
     let workdayColor: Color
     let solarTermColor: Color
     
-    // 毛玻璃效果 - 仅保留开关和整体透明度
-    let blurEnabled: Bool
-    let blurOpacity: Double
-    
     // 字体设置
     let fontSize: FontSize
     
@@ -125,8 +121,8 @@ struct Theme {
         todayTextColor: Color.blue,
         workdayColor: Color.orange,
         solarTermColor: Color.blue,
-        blurEnabled: true,
-        blurOpacity: 0.75,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -145,8 +141,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color.blue,
-        blurEnabled: true,
-        blurOpacity: 0.85,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -165,8 +161,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color(red: 0.4, green: 0.9, blue: 0.8),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -185,8 +181,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color(red: 1.0, green: 0.7, blue: 0.5),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -205,8 +201,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color.orange,
         solarTermColor: Color(red: 0.5, green: 0.9, blue: 1.0),
-        blurEnabled: true,
-        blurOpacity: 0.75,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -225,8 +221,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color(red: 0.9, green: 0.7, blue: 0.3),
         solarTermColor: Color(red: 0.5, green: 0.9, blue: 0.5),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -245,8 +241,8 @@ struct Theme {
         todayTextColor: Color(red: 0.6, green: 0.2, blue: 0.4),
         workdayColor: Color(red: 0.8, green: 0.5, blue: 0.2),
         solarTermColor: Color(red: 0.7, green: 0.3, blue: 0.6),
-        blurEnabled: true,
-        blurOpacity: 0.75,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -265,8 +261,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color(red: 0.9, green: 0.6, blue: 0.4),
         solarTermColor: Color(red: 0.8, green: 0.6, blue: 0.9),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -285,8 +281,8 @@ struct Theme {
         todayTextColor: Color(red: 0.0, green: 0.0, blue: 0.0),
         workdayColor: Color(red: 1.0, green: 0.8, blue: 0.0),
         solarTermColor: Color(red: 0.4, green: 1.0, blue: 0.6),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -305,8 +301,8 @@ struct Theme {
         todayTextColor: Color.white,
         workdayColor: Color(red: 0.8, green: 0.7, blue: 0.3),
         solarTermColor: Color(red: 0.9, green: 0.7, blue: 0.4),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -325,8 +321,8 @@ struct Theme {
         todayTextColor: Color(red: 0.2, green: 0.4, blue: 0.1),
         workdayColor: Color(red: 0.9, green: 0.5, blue: 0.1),
         solarTermColor: Color(red: 0.6, green: 0.9, blue: 0.3),
-        blurEnabled: true,
-        blurOpacity: 0.8,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -345,8 +341,8 @@ struct Theme {
         todayTextColor: Color(red: 0.25, green: 0.4, blue: 0.15),
         workdayColor: Color(red: 0.7, green: 0.55, blue: 0.2),
         solarTermColor: Color(red: 0.4, green: 0.6, blue: 0.3),
-        blurEnabled: true,
-        blurOpacity: 0.75,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -365,8 +361,8 @@ struct Theme {
         todayTextColor: Color(red: 0.5, green: 0.2, blue: 0.3),
         workdayColor: Color(red: 0.75, green: 0.55, blue: 0.2),
         solarTermColor: Color(red: 0.7, green: 0.4, blue: 0.55),
-        blurEnabled: true,
-        blurOpacity: 0.75,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -385,8 +381,8 @@ struct Theme {
         todayTextColor: Color(red: 0.1, green: 0.35, blue: 0.65),
         workdayColor: Color(red: 0.6, green: 0.5, blue: 0.2),
         solarTermColor: Color(red: 0.25, green: 0.6, blue: 0.8),
-        blurEnabled: true,
-        blurOpacity: 0.75,
+
+
         fontSize: .medium,
         customAccentColor: nil,
         customTodayColor: nil
@@ -394,24 +390,16 @@ struct Theme {
     
     // MARK: - Theme Copy Helpers
     
-    func withBlurEnabled(_ enabled: Bool) -> Theme {
-        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: enabled, blurOpacity: blurOpacity, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
-    }
-    
-    func withBlurOpacity(_ opacity: Double) -> Theme {
-        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: opacity, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
-    }
-    
     func withFontSize(_ size: FontSize) -> Theme {
-        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: blurOpacity, fontSize: size, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, fontSize: size, customAccentColor: customAccentColor, customTodayColor: customTodayColor)
     }
     
     func withCustomAccentColor(_ color: Color?) -> Theme {
-        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: blurOpacity, fontSize: fontSize, customAccentColor: color, customTodayColor: customTodayColor)
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, fontSize: fontSize, customAccentColor: color, customTodayColor: customTodayColor)
     }
     
     func withCustomTodayColor(_ color: Color?) -> Theme {
-        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, blurEnabled: blurEnabled, blurOpacity: blurOpacity, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: color)
+        Theme(type: type, backgroundColor: backgroundColor, textColor: textColor, secondaryTextColor: secondaryTextColor, accentColor: accentColor, gridBackgroundColor: gridBackgroundColor, weekendColor: weekendColor, holidayColor: holidayColor, todayBackgroundColor: todayBackgroundColor, todayTextColor: todayTextColor, workdayColor: workdayColor, solarTermColor: solarTermColor, fontSize: fontSize, customAccentColor: customAccentColor, customTodayColor: color)
     }
 }
 
@@ -453,8 +441,6 @@ class ThemeManager: ObservableObject {
     @Published var currentTheme: Theme {
         didSet {
             UserDefaults.standard.set(currentTheme.type.rawValue, forKey: "selectedTheme")
-            UserDefaults.standard.set(currentTheme.blurEnabled, forKey: "blurEnabled")
-            UserDefaults.standard.set(currentTheme.blurOpacity, forKey: "blurOpacity")
             UserDefaults.standard.set(currentTheme.fontSize.rawValue, forKey: "fontSize")
             
             if let customAccent = currentTheme.customAccentColor {
@@ -478,9 +464,6 @@ class ThemeManager: ObservableObject {
     private init() {
         let savedThemeType = UserDefaults.standard.string(forKey: "selectedTheme") ?? ThemeType.system.rawValue
         let themeType = ThemeType(rawValue: savedThemeType) ?? .system
-        let blurEnabled = UserDefaults.standard.object(forKey: "blurEnabled") != nil ?
-            UserDefaults.standard.bool(forKey: "blurEnabled") : true
-        let blurOpacity = UserDefaults.standard.double(forKey: "blurOpacity")
         
         var baseTheme: Theme
         if themeType == .system {
@@ -495,8 +478,6 @@ class ThemeManager: ObservableObject {
         }
         
         currentTheme = baseTheme
-            .withBlurEnabled(blurEnabled)
-            .withBlurOpacity(blurOpacity > 0 ? blurOpacity : 0.75)
     }
     
     func setTheme(_ type: ThemeType) {
@@ -513,14 +494,6 @@ class ThemeManager: ObservableObject {
         }
         
         currentTheme = baseTheme
-            .withBlurEnabled(currentTheme.blurEnabled)
-            .withBlurOpacity(currentTheme.blurOpacity)
-    }
-    
-    func setBlurEffect(enabled: Bool, opacity: Double) {
-        currentTheme = currentTheme
-            .withBlurEnabled(enabled)
-            .withBlurOpacity(opacity)
     }
     
     func setFontSize(_ fontSize: FontSize) {

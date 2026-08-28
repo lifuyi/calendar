@@ -124,11 +124,14 @@ struct CalendarView: View {
                         // 天气面板
                         WeatherPanelView(viewModel: viewModel)
                     }
-                    .frame(maxWidth: 150, maxHeight: .infinity, alignment: .top)
+                    .frame(width: 150)
+                    .frame(maxHeight: .infinity, alignment: .top)
                     .padding()
                     .background(
-                        themeManager.currentTheme.gridBackgroundColor
+                        AnyView(themeManager.currentTheme.gridBackgroundColor)
                     )
+                    .cornerRadius(10)
+                    .padding(.bottom, 50)
                 }
                 
                 // Add a button to manually request calendar access if needed
@@ -143,11 +146,7 @@ struct CalendarView: View {
                 }
             }
             .padding()
-            .background(
-                themeManager.currentTheme.blurEnabled ?
-                AnyView(Color.clear) :
-                AnyView(themeManager.currentTheme.backgroundColor)
-            )
+            .background(themeManager.currentTheme.backgroundColor)
             
             // 悬浮式事件抽屉
             VStack {
@@ -155,7 +154,7 @@ struct CalendarView: View {
                 EventsDrawerView(eventManager: eventManager, isExpanded: $isEventsDrawerExpanded)
                     .frame(maxWidth: 500)
                     .padding(.horizontal, 20)
-                    .zIndex(1) // 确保抽屉在其他内容之上
+                    .zIndex(1)
             }
             
             // Event creation popup

@@ -54,38 +54,6 @@ struct CompactSettingsView: View {
                     Divider()
                         .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
                     
-                    // 毛玻璃开关
-                    SettingsSection(title: "视觉效果") {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("毛玻璃效果")
-                                    .font(.custom(customFont, size: 14))
-                                    .foregroundColor(themeManager.currentTheme.textColor)
-                                Text("关闭后颜色更加鲜明")
-                                    .font(.custom(customFont, size: 11))
-                                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
-                            }
-                            Spacer()
-                            Toggle("", isOn: Binding(
-                                get: { themeManager.currentTheme.blurEnabled },
-                                set: { enabled in
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        themeManager.setBlurEffect(enabled: enabled, opacity: themeManager.currentTheme.blurOpacity)
-                                        // 通知 App 刷新底层 blur view
-                                        if let appDelegate = NSApp.delegate as? AppDelegate {
-                                            appDelegate.updateBlurVisibility()
-                                        }
-                                    }
-                                }
-                            ))
-                            .toggleStyle(SwitchToggleStyle())
-                        }
-                    }
-                    .fadeTransition(isVisible: animateContent, delay: 0.15)
-                    
-                    Divider()
-                        .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
-                    
                     // Other Settings
                     SettingsSection(title: "其他设置") {
                         VStack(spacing: 12) {
