@@ -179,6 +179,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    private var blurView: NSVisualEffectView?
+    
     private func setupPopover() {
         popover = NSPopover()
         popover?.contentSize = Constants.popoverSize
@@ -195,7 +197,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         hostingController.view.wantsLayer = true
         hostingController.view.layer?.backgroundColor = NSColor.clear.cgColor
         
+        let blur = NSVisualEffectView()
+        blur.material = .popover
+        blur.blendingMode = .behindWindow
+        blur.state = .active
+        blur.wantsLayer = true
+        blur.layer?.cornerRadius = 12
+        blur.layer?.masksToBounds = true
+        blur.isHidden = !ThemeManager.shared.currentTheme.blurEnabled
+        self.blurView = blur
+        
+        hostingController.view.addSubview(blur, positioned: .below, relativeTo: nil)
+        blur.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            blur.topAnchor.constraint(equalTo: hostingController.view.topAnchor),
+            blur.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
+            blur.leadingAnchor.constraint(equalTo: hostingController.view.leadingAnchor),
+            blur.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
+        ])
+        
         popover?.contentViewController = hostingController
+    }
+    
+    func updateBlurVisibility() {
+        blurView?.isHidden = !ThemeManager.shared.currentTheme.blurEnabled
     }
     
     private func startStatusBarTimer() {

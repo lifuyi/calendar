@@ -94,7 +94,7 @@ struct EventsDrawerView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            .background(themeManager.currentTheme.gridBackgroundColor)
+            .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.85))
             .onTapGesture {
                 withAnimation {
                     isExpanded.toggle()
@@ -159,7 +159,7 @@ struct EventsDrawerView: View {
         .frame(maxWidth: .infinity)
         .frame(height: isExpanded ? 200 : 30, alignment: .top) // Fixed height when expanded
         .animation(.easeInOut, value: isExpanded)
-        .background(themeManager.currentTheme.gridBackgroundColor)
+        .background(themeManager.currentTheme.gridBackgroundColor.opacity(0.85))
         .cornerRadius(8)
         .shadow(radius: 5)
         .padding(.bottom, 20) // 添加底部边距确保可见

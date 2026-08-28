@@ -54,6 +54,37 @@ struct CompactSettingsView: View {
                     Divider()
                         .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
                     
+                    // 毛玻璃开关
+                    SettingsSection(title: "视觉效果") {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("毛玻璃效果")
+                                    .font(.custom(customFont, size: 14))
+                                    .foregroundColor(themeManager.currentTheme.textColor)
+                                Text("开启后背景呈现磨砂玻璃质感")
+                                    .font(.custom(customFont, size: 11))
+                                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                            }
+                            Spacer()
+                            Toggle("", isOn: Binding(
+                                get: { themeManager.currentTheme.blurEnabled },
+                                set: { enabled in
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        themeManager.setBlurEffect(enabled: enabled)
+                                        if let appDelegate = NSApp.delegate as? AppDelegate {
+                                            appDelegate.updateBlurVisibility()
+                                        }
+                                    }
+                                }
+                            ))
+                            .toggleStyle(SwitchToggleStyle())
+                        }
+                    }
+                    .fadeTransition(isVisible: animateContent, delay: 0.15)
+                    
+                    Divider()
+                        .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
+                    
                     // Other Settings
                     SettingsSection(title: "其他设置") {
                         VStack(spacing: 12) {
@@ -173,12 +204,15 @@ struct ThemeSelectionButton: View {
         case .forest: return Color(red: 0.4, green: 0.8, blue: 0.4)
         case .cherryBlossom: return Color(red: 0.9, green: 0.4, blue: 0.7)
         case .lavender: return Color(red: 0.7, green: 0.5, blue: 0.9)
-        case .neon: return Color(red: 0.0, green: 1.0, blue: 0.8)
         case .autumn: return Color(red: 0.9, green: 0.6, blue: 0.2)
         case .tropical: return Color(red: 1.0, green: 0.8, blue: 0.0)
         case .matcha: return Color(red: 0.45, green: 0.65, blue: 0.3)
         case .roseGold: return Color(red: 0.75, green: 0.4, blue: 0.5)
         case .arctic: return Color(red: 0.2, green: 0.55, blue: 0.85)
+        case .yellow: return Color(red: 1.0, green: 0.85, blue: 0.0)
+        case .red: return Color(red: 0.85, green: 0.15, blue: 0.15)
+        case .mint: return Color(red: 0.2, green: 0.7, blue: 0.45)
+        case .orange: return Color(red: 0.95, green: 0.55, blue: 0.1)
         }
     }
 }

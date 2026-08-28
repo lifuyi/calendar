@@ -128,7 +128,7 @@ struct CalendarView: View {
                     .frame(maxHeight: .infinity, alignment: .top)
                     .padding()
                     .background(
-                        AnyView(themeManager.currentTheme.gridBackgroundColor)
+                        AnyView(themeManager.currentTheme.gridBackgroundColor.opacity(0.85))
                     )
                     .cornerRadius(10)
                     .padding(.bottom, 50)
@@ -146,7 +146,11 @@ struct CalendarView: View {
                 }
             }
             .padding()
-            .background(themeManager.currentTheme.backgroundColor)
+            .background(
+                themeManager.currentTheme.blurEnabled ?
+                AnyView(Color.clear) :
+                AnyView(themeManager.currentTheme.backgroundColor)
+            )
             
             // 悬浮式事件抽屉
             VStack {
