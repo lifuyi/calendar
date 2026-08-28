@@ -54,7 +54,6 @@ struct WeatherPanelView: View {
                 }
             }
             .padding(8)
-            .background(themeManager.currentTheme.gridBackgroundColor)
             .cornerRadius(8)
             
             Spacer()
