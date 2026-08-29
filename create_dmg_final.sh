@@ -24,6 +24,13 @@ fi
 # Clean up any existing DMG
 rm -f "$DMG_NAME"
 
+# Background image (optional)
+BACKGROUND=""
+if [ -f "dmg_background.png" ]; then
+    BACKGROUND="--background dmg_background.png"
+    echo "Using background image: dmg_background.png"
+fi
+
 # Create DMG with drag-to-install layout
 create-dmg \
   --volname "$APP_NAME" \
@@ -34,6 +41,7 @@ create-dmg \
   --icon "Applications" 450 190 \
   --hide-extension "$APP_NAME.app" \
   --app-drop-link 450 190 \
+  $BACKGROUND \
   "$DMG_NAME" \
   "$APP_PATH"
 
