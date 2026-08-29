@@ -1,4 +1,5 @@
 .build/
+.DS_Store
 
 # Build artifacts
 *.app/Contents/MacOS/*
@@ -12,4 +13,4 @@
 Sources/CalendarStatusBar/wechat_2025-09-10_173333_177.png
 CalendarStatusBar.app/Contents/MacOS/CalendarStatusBar
 CalendarStatusBar.app
-CalendarStatusBar.dmg.DS_Store
+CalendarStatusBar.dmg

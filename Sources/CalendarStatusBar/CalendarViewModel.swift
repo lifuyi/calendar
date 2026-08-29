@@ -117,7 +117,9 @@ class CalendarViewModel: ObservableObject {
         }
         
         // 优化下个月日期的添加
-        let remainingDays = 42 - days.count
+        let totalRows = (days.count + 6) / 7  // 计算需要的行数
+        let targetDays = totalRows * 7         // 向上取整到7的倍数
+        let remainingDays = targetDays - days.count
         if remainingDays > 0 {
             let nextMonth = calendar.date(byAdding: .month, value: 1, to: firstDayOfMonth)!
             let nextMonthComponents = calendar.dateComponents([.year, .month], from: nextMonth)
