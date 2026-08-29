@@ -97,16 +97,20 @@ public class LunarBarSolarTermCalculator {
             return (termIndex, solarTermNames[termIndex])
         }
         
-        // 检查前一年的最后几个节气（可能跨年）
-        if let lastYearData = solarTermsData[String(year - 1)],
-           let termIndex = lastYearData[dateString] {
-            return (termIndex, solarTermNames[termIndex])
-        }
-        
-        // 检查下一年的前几个节气（可能跨年）
-        if let nextYearData = solarTermsData[String(year + 1)],
-           let termIndex = nextYearData[dateString] {
-            return (termIndex, solarTermNames[termIndex])
+        // 跨年检查：只检查1月份的日期（小寒/大寒可能跨年）
+        let month = calendar.component(.month, from: date)
+        if month == 1 {
+            // 检查前一年的最后几个节气（小寒/大寒在1月）
+            if let lastYearData = solarTermsData[String(year - 1)],
+               let termIndex = lastYearData[dateString] {
+                return (termIndex, solarTermNames[termIndex])
+            }
+            
+            // 检查下一年的前几个节气（小寒/大寒在1月）
+            if let nextYearData = solarTermsData[String(year + 1)],
+               let termIndex = nextYearData[dateString] {
+                return (termIndex, solarTermNames[termIndex])
+            }
         }
         
         return (-1, nil)
