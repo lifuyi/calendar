@@ -21,8 +21,8 @@ if ! command -v create-dmg &> /dev/null; then
     exit 1
 fi
 
-# Clean up any existing DMG
-rm -f "$DMG_NAME"
+# Clean up any existing DMG and temp files
+rm -f "$DMG_NAME" rw.*.dmg
 
 # Background image (optional)
 BACKGROUND=""
