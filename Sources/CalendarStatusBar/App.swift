@@ -224,10 +224,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func startStatusBarTimer() {
-        statusBarUpdateTimer = Timer.scheduledTimer(
-            withTimeInterval: Constants.updateInterval,
-            repeats: true
-        ) { [weak self] _ in
+        let timer = Timer(timeInterval: Constants.updateInterval, repeats: true) { [weak self] _ in
             if let button = self?.statusItem?.button {
                 self?.updateStatusBarButton(button)
             }
@@ -241,6 +238,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 EventManager.shared.loadTodayEvents(for: currentDate)
             }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        statusBarUpdateTimer = timer
     }
     
     private func updateStatusBarButton(_ button: NSStatusBarButton) {
