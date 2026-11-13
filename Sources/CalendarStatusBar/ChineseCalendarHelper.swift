@@ -151,15 +151,40 @@ public class ChineseCalendarHelper {
         
         if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
             if holidayType == .holiday {
-                // 对于通过 HolidayManager 管理的节假日，我们需要映射到具体的名称
-                // 这里可以根据实际需求进行扩展
+                // 优先使用 HolidayManager 中配置的年度节日名称
+                if let name = HolidayManager.default.nameOf(year: year, monthDay: monthDayString) {
+                    return name
+                }
                 switch monthDayString {
                 case "0101": return "元旦"
                 case "0501": return "劳动节"
                 case "1001": return "国庆节"
-                default: return "节假日"
+                default: return lunarHolidayName(for: date)
                 }
             }
+        }
+        
+        return nil
+    }
+    
+    // 根据农历和节气推断节日名称，用于配置中未标注名称的年份
+    private static func lunarHolidayName(for date: Date) -> String? {
+        let components = chineseCalendar.dateComponents([.month, .day], from: date)
+        
+        // 除夕：次日为正月初一
+        if let nextDay = gregorianCalendar.date(byAdding: .day, value: 1, to: date) {
+            let nextComponents = chineseCalendar.dateComponents([.month, .day], from: nextDay)
+            if nextComponents.month == 1 && nextComponents.day == 1 {
+                return "春节"
+            }
+        }
+        
+        if components.month == 1 && components.day == 1 { return "春节" }
+        if components.month == 5 && components.day == 5 { return "端午节" }
+        if components.month == 8 && components.day == 15 { return "中秋节" }
+        
+        if isSolarTerm(date), solarTermName(for: date) == "清明" {
+            return "清明节"
         }
         
         return nil

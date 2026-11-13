@@ -155,6 +155,11 @@ class WeatherService: ObservableObject {
         isLoading = true
         errorMessage = nil
         
+        fetchFromOpenMeteo()
+    }
+    
+    // 首选数据源：Open-Meteo
+    private func fetchFromOpenMeteo() {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.open-meteo.com"
@@ -175,58 +180,76 @@ class WeatherService: ObservableObject {
         
         print("WeatherService: 请求URL: \(url)")
         
-        // 添加超时时间
         var request = URLRequest(url: url)
-        request.timeoutInterval = 10.0
+        request.timeoutInterval = 6.0
         
-        // 添加超时机制
-        let timeoutTask = DispatchWorkItem { [weak self] in
-            DispatchQueue.main.async {
-                if self?.isLoading == true {
-                    print("WeatherService: 天气数据获取超时")
-                    self?.isLoading = false
-                    self?.errorMessage = "天气数据获取超时"
-                }
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("WeatherService: Open-Meteo 获取失败(\(error.localizedDescription))，尝试备用数据源")
+                self.fetchFromWTTR()
+                return
             }
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 15.0, execute: timeoutTask)
-        
-        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-            // 取消超时任务
-            timeoutTask.cancel()
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("WeatherService: Open-Meteo 返回 HTTP \(httpResponse.statusCode)，尝试备用数据源")
+                self.fetchFromWTTR()
+                return
+            }
+            
+            guard let data = data, !data.isEmpty else {
+                print("WeatherService: Open-Meteo 未返回数据，尝试备用数据源")
+                self.fetchFromWTTR()
+                return
+            }
             
             DispatchQueue.main.async {
-                self?.isLoading = false
+                self.isLoading = false
+                self.parseWeatherData(data: data)
+            }
+        }.resume()
+    }
+    
+    // 备用数据源：wttr.in（国内网络通常可访问）
+    private func fetchFromWTTR() {
+        guard let url = URL(string: "https://wttr.in/\(latitude),\(longitude)?format=j1") else {
+            self.errorMessage = "无效的URL"
+            self.isLoading = false
+            return
+        }
+        
+        print("WeatherService: 备用请求URL: \(url)")
+        
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 12.0
+        request.setValue("CalendarStatusBar", forHTTPHeaderField: "User-Agent")
+        
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
                 
                 if let error = error {
                     print("WeatherService: 获取天气失败: \(error.localizedDescription)")
-                    self?.errorMessage = "获取天气失败: \(error.localizedDescription)"
+                    self.errorMessage = "获取天气数据失败: \(error.localizedDescription)"
                     return
                 }
                 
-                // 检查HTTP响应状态
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("WeatherService: HTTP响应状态: \(httpResponse.statusCode)")
-                    if httpResponse.statusCode != 200 {
-                        self?.errorMessage = "获取天气失败: HTTP \(httpResponse.statusCode)"
-                        return
-                    }
-                }
-                
-                guard let data = data else {
-                    print("WeatherService: 未收到天气数据")
-                    self?.errorMessage = "未收到天气数据"
+                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                    self.errorMessage = "获取天气数据失败: HTTP \(httpResponse.statusCode)"
                     return
                 }
                 
-                print("WeatherService: 收到天气数据，大小: \(data.count) 字节")
+                guard let data = data, !data.isEmpty else {
+                    self.errorMessage = "未收到天气数据"
+                    return
+                }
                 
-                // 调用类内部的解析方法
-                self?.parseWeatherData(data: data)
+                self.parseWTTRData(data: data)
             }
-        }
-        task.resume()
+        }.resume()
     }
     
     // 解析天气数据 (移到类内部并修复访问)
@@ -295,10 +318,76 @@ class WeatherService: ObservableObject {
         }
     }
     
+    // 解析 wttr.in 天气数据
+    private func parseWTTRData(data: Data) {
+        do {
+            let response = try JSONDecoder().decode(WTTRResponse.self, from: data)
+            guard let current = response.current_condition?.first else {
+                print("WeatherService: wttr.in 响应中没有当前天气数据")
+                self.errorMessage = "天气数据格式不正确"
+                return
+            }
+            
+            if let temp = Double(current.temp_C ?? "") {
+                self.temperature = String(format: "%.1f", temp)
+            }
+            if let feelsLike = Double(current.FeelsLikeC ?? "") {
+                self.feelTemperature = String(format: "%.1f", feelsLike)
+            }
+            if let humidity = Double(current.humidity ?? "") {
+                self.humidity = String(format: "%.0f", humidity)
+            }
+            if let precipitation = Double(current.precipMM ?? "") {
+                self.rain = String(format: "%.1f", precipitation)
+            }
+            if let pressure = Double(current.pressure ?? "") {
+                self.airPressure = String(format: "%.0f", pressure)
+            }
+            if let code = Int(current.weatherCode ?? "") {
+                self.weatherInfo = wwoWeatherDescriptions[code] ?? "未知天气"
+            }
+            
+            self.errorMessage = nil
+        } catch {
+            print("WeatherService: 解析 wttr.in 天气数据失败: \(error)")
+            self.errorMessage = "解析天气数据失败: \(error.localizedDescription)"
+        }
+    }
+    
     // 获取天气描述的辅助方法
     private func getWeatherDescription(code: Int) -> String? {
         return weatherCodes[code]
     }
+}
+
+// wttr.in 使用的 WWO 天气代码到中文描述
+private let wwoWeatherDescriptions: [Int: String] = [
+    113: "晴朗", 116: "多云", 119: "阴", 122: "阴天",
+    143: "薄雾", 176: "局部有雨", 179: "局部有雪", 182: "局部雨夹雪",
+    185: "局部冻毛毛雨", 200: "雷阵雨", 227: "吹雪", 230: "暴风雪",
+    248: "雾", 260: "冻雾", 263: "局部小毛毛雨", 266: "小毛毛雨",
+    281: "冻毛毛雨", 284: "强冻毛毛雨", 293: "局部小雨", 296: "小雨",
+    299: "局部中雨", 302: "中雨", 305: "局部大雨", 308: "大雨",
+    311: "小冻雨", 314: "中到大冻雨", 317: "小雨夹雪", 320: "中到大雨夹雪",
+    323: "局部小雪", 326: "小雪", 329: "局部中雪", 332: "中雪",
+    335: "局部大雪", 338: "大雪", 350: "冰粒", 353: "小阵雨",
+    356: "中到大阵雨", 359: "强阵雨", 362: "小阵雨夹雪", 365: "中到大阵雨夹雪",
+    368: "小阵雪", 371: "中到大阵雪", 374: "小冰粒阵", 377: "中到大冰粒阵",
+    386: "局部雷阵雨", 389: "中到大雷阵雨", 392: "局部雷阵雪", 395: "中到大雷阵雪"
+]
+
+// wttr.in API 响应模型
+struct WTTRResponse: Codable {
+    let current_condition: [WTTRCurrentCondition]?
+}
+
+struct WTTRCurrentCondition: Codable {
+    let temp_C: String?
+    let FeelsLikeC: String?
+    let humidity: String?
+    let precipMM: String?
+    let pressure: String?
+    let weatherCode: String?
 }
 
 // Open-Meteo API 响应模型

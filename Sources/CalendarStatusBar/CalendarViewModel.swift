@@ -183,18 +183,21 @@ class CalendarViewModel: ObservableObject {
         
         if let holidayType = HolidayManager.default.typeOf(year: year, monthDay: monthDayString) {
             if holidayType == .holiday {
-                // 对于通过 HolidayManager 管理的节假日，我们需要映射到具体的名称
+                // 优先使用 HolidayManager 中配置的年度节日名称
+                if let name = HolidayManager.default.nameOf(year: year, monthDay: monthDayString) {
+                    return name
+                }
                 switch monthDayString {
                 case "0101": return "元旦"
                 case "0501": return "劳动节"
                 case "1001": return "国庆节"
                 // 可以根据需要添加更多节日
-                default: 
+                default:
                     // 尝试从 ChineseCalendarHelper 获取名称
                     if let name = ChineseCalendarHelper.holidayName(for: date) {
                         return name
                     }
-                    return "节假日"
+                    return nil
                 }
             }
         }
